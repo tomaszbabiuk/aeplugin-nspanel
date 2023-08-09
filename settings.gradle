@@ -1,0 +1,3 @@
+rootProject.name = 'aeplugin-nspanel'
+
+includeBuild "../automate-everything"

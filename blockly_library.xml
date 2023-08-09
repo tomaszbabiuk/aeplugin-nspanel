@@ -1,0 +1,233 @@
+<xml xmlns="https://developers.google.com/blockly/xml"><block type="factory_base" id="KA]B4c?IGqh|FIxmO%nb" x="10" y="10">
+    <mutation connections="TOP"></mutation>
+    <field name="NAME">nspanel_dialog</field>
+    <field name="INLINE">AUTO</field>
+    <field name="CONNECTIONS">TOP</field>
+    <statement name="INPUTS">
+        <block type="input_dummy" id="tYpm]A-vTPT?+r_B-Da+">
+            <field name="ALIGN">CENTRE</field>
+            <statement name="FIELDS">
+                <block type="field_static" id="*DdA(l}[1F4Z|*_:qBon">
+                    <field name="TEXT">Show dialog</field>
+                </block>
+            </statement>
+            <next>
+                <block type="input_dummy" id="=aS4_9|P~5uC`6j#bAA{">
+                    <field name="ALIGN">LEFT</field>
+                    <statement name="FIELDS">
+                        <block type="field_static" id="DHTpy8u-1S]mg$OG}2WR">
+                            <field name="TEXT">Message</field>
+                            <next>
+                                <block type="field_input" id="irX:FMPUx}1?nF$jo~@v">
+                                    <field name="TEXT">Hello World!</field>
+                                    <field name="FIELDNAME">MESSAGE</field>
+                                </block>
+                            </next>
+                        </block>
+                    </statement>
+                    <next>
+                        <block type="input_statement" id="F=%,gi1+:*yoK$8r4tF(">
+                            <field name="INPUTNAME">NAME</field>
+                            <field name="ALIGN">LEFT</field>
+                            <statement name="FIELDS">
+                                <block type="field_static" id="3TJgw,_]sCkWQ_W-!/EL">
+                                    <field name="TEXT">Options</field>
+                                </block>
+                            </statement>
+                            <value name="TYPE">
+                                <shadow type="type_null" id="OypOf{~znG:L?=XBY68!"></shadow>
+                                <block type="type_other" id=".wj(:3.KZl^XmVMy`g]{">
+                                    <field name="TYPE">nspanel_option</field>
+                                </block>
+                            </value>
+                        </block>
+                    </next>
+                </block>
+            </next>
+        </block>
+    </statement>
+    <value name="TOOLTIP">
+        <block type="text" id="pj115Z!RQ)Q(W?oGt4Z2">
+            <field name="TEXT"></field>
+        </block>
+    </value>
+    <value name="HELPURL">
+        <block type="text" id="[3nI!kSUf%6Jbu84K#il">
+            <field name="TEXT"></field>
+        </block>
+    </value>
+    <value name="TOPTYPE">
+        <shadow type="type_null" id="Q64yT[+BfGq(cCrU`=8v"></shadow>
+        <block type="type_other" id="Mw!C7Gm}Ewy]Hf}yqN9c">
+            <field name="TYPE">nspanel_dialog</field>
+        </block>
+    </value>
+    <value name="COLOUR">
+        <block type="colour_hue" id="XCk/%lSk5rR91u6ou#YE">
+            <mutation colour="#5b67a5"></mutation>
+            <field name="HUE">230</field>
+        </block>
+    </value>
+</block><block type="factory_base" id="5KMNb.2j2lyMOSZ]@`7}" deletable="false" movable="false" x="10" y="10">
+    <mutation connections="BOTH"></mutation>
+    <field name="NAME">nspanel_option</field>
+    <field name="INLINE">AUTO</field>
+    <field name="CONNECTIONS">BOTH</field>
+    <statement name="INPUTS">
+        <block type="input_dummy" id="B:`(mUDI%Ypt-7gLCuYS">
+            <field name="ALIGN">LEFT</field>
+            <statement name="FIELDS">
+                <block type="field_static" id="QQhaNdjtxyczhr./g]kL">
+                    <field name="TEXT">Option:</field>
+                    <next>
+                        <block type="field_input" id="p;Y1=w#1yl2_F75ew]C8">
+                            <field name="TEXT"></field>
+                            <field name="FIELDNAME">NAME</field>
+                        </block>
+                    </next>
+                </block>
+            </statement>
+            <next>
+                <block type="input_statement" id="F=%,gi1+:*yoK$8r4tF(">
+                    <field name="INPUTNAME">NAME</field>
+                    <field name="ALIGN">LEFT</field>
+                    <statement name="FIELDS">
+                        <block type="field_static" id="3TJgw,_]sCkWQ_W-!/EL">
+                            <field name="TEXT">Button label</field>
+                            <next>
+                                <block type="field_input" id="BU4+g8/k^MqUf$3%xkP5">
+                                    <field name="TEXT">OK</field>
+                                    <field name="FIELDNAME">BUTTON1</field>
+                                </block>
+                            </next>
+                        </block>
+                    </statement>
+                    <value name="TYPE">
+                        <shadow type="type_null" id="OypOf{~znG:L?=XBY68!"></shadow>
+                        <block type="type_other" id="MOTf}3^v_PQ`5IlwssFt">
+                            <field name="TYPE">nspanel_dialog</field>
+                        </block>
+                    </value>
+                </block>
+            </next>
+        </block>
+    </statement>
+    <value name="TOOLTIP">
+        <block type="text" id="IP`d%YAscvd_619?QCs)" deletable="false" movable="false">
+            <field name="TEXT">Type your option here</field>
+        </block>
+    </value>
+    <value name="HELPURL">
+        <block type="text" id="`$$*YTN?f/Qz#[W1`X|(" deletable="false" movable="false">
+            <field name="TEXT"></field>
+        </block>
+    </value>
+    <value name="TOPTYPE">
+        <shadow type="type_null" id="S+5uWT9GUQwEKsVk$E4J"></shadow>
+        <block type="type_other" id="7?mtCW{aDfX$GU5riL^^">
+            <field name="TYPE">nspanel_option</field>
+        </block>
+    </value>
+    <value name="BOTTOMTYPE">
+        <shadow type="type_null" id="BlItLl5sDcOL9r+ft`#W"></shadow>
+        <block type="type_other" id="BdoJ+rKvUD{!r8hAz`pL">
+            <field name="TYPE">nspanel_option</field>
+        </block>
+    </value>
+    <value name="COLOUR">
+        <block type="colour_hue" id="sWssXA+0/%a-F:0e|yvS">
+            <mutation colour="#805ba5"></mutation>
+            <field name="HUE">270</field>
+        </block>
+    </value>
+</block><block type="factory_base" id="b7AXXhk2xEd{N@}o#NMG" deletable="false" movable="false" x="10" y="10">
+    <mutation connections="BOTH"></mutation>
+    <field name="NAME">nspanel_device</field>
+    <field name="INLINE">AUTO</field>
+    <field name="CONNECTIONS">BOTH</field>
+    <statement name="INPUTS">
+        <block type="input_dummy" id="ug@evFgdkbk%cN`tU-*U">
+            <field name="ALIGN">LEFT</field>
+            <statement name="FIELDS">
+                <block type="field_label_serializable" id="bS,)0Zm#7lUU27NRsE8K">
+                    <field name="TEXT">device1</field>
+                    <field name="FIELDNAME">NAME</field>
+                </block>
+            </statement>
+        </block>
+    </statement>
+    <value name="TOOLTIP">
+        <block type="text" id="5QjdkUw5~dmZ;eduqf0F" deletable="false" movable="false">
+            <field name="TEXT"></field>
+        </block>
+    </value>
+    <value name="HELPURL">
+        <block type="text" id="!f~1cxfM!fhM|/x56BbL" deletable="false" movable="false">
+            <field name="TEXT"></field>
+        </block>
+    </value>
+    <value name="TOPTYPE">
+        <shadow type="type_null" id="hy}Z,up)_@|0YWVG95)U"></shadow>
+        <block type="type_other" id="duu!NYvJ7M+?LCyFVml;">
+            <field name="TYPE">nspanel_device</field>
+        </block>
+    </value>
+    <value name="BOTTOMTYPE">
+        <shadow type="type_null" id="t?PgNIZ4Jqo-=ZmRvy0;"></shadow>
+        <block type="type_other" id="cy~ACLX)(|%Fp*`+T+!N">
+            <field name="TYPE">nspanel_device</field>
+        </block>
+    </value>
+    <value name="COLOUR">
+        <block type="colour_hue" id=")%,g}U5f?_bnYwwMSY4w">
+            <mutation colour="#5b67a5"></mutation>
+            <field name="HUE">230</field>
+        </block>
+    </value>
+</block><block type="factory_base" id="KA]B4c?IGqh|FIxmO%nb" x="10" y="10">
+    <mutation connections="TOP"></mutation>
+    <field name="NAME">nspanel_selector</field>
+    <field name="INLINE">AUTO</field>
+    <field name="CONNECTIONS">TOP</field>
+    <statement name="INPUTS">
+        <block type="input_dummy" id="tYpm]A-vTPT?+r_B-Da+">
+            <field name="ALIGN">CENTRE</field>
+            <statement name="FIELDS">
+                <block type="field_static" id="*DdA(l}[1F4Z|*_:qBon">
+                    <field name="TEXT">Device selector</field>
+                </block>
+            </statement>
+            <next>
+                <block type="input_statement" id="F=%,gi1+:*yoK$8r4tF(">
+                    <field name="INPUTNAME">NAME</field>
+                    <field name="ALIGN">LEFT</field>
+                    <value name="TYPE">
+                        <shadow type="type_null" id="OypOf{~znG:L?=XBY68!"></shadow>
+                        <block type="type_other" id="vI.F0q%o^DcJ_ex)F~ZA">
+                            <field name="TYPE">nspanel_device</field>
+                        </block>
+                    </value>
+                </block>
+            </next>
+        </block>
+    </statement>
+    <value name="TOOLTIP">
+        <block type="text" id="pj115Z!RQ)Q(W?oGt4Z2">
+            <field name="TEXT"></field>
+        </block>
+    </value>
+    <value name="HELPURL">
+        <block type="text" id="[3nI!kSUf%6Jbu84K#il">
+            <field name="TEXT"></field>
+        </block>
+    </value>
+    <value name="TOPTYPE">
+        <shadow type="type_null" id="Q64yT[+BfGq(cCrU`=8v"></shadow>
+    </value>
+    <value name="COLOUR">
+        <block type="colour_hue" id="XCk/%lSk5rR91u6ou#YE">
+            <mutation colour="#5b67a5"></mutation>
+            <field name="HUE">230</field>
+        </block>
+    </value>
+</block></xml>
