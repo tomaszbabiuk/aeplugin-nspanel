@@ -14,7 +14,7 @@ class NsPanelAutomationUnit(
     states: Map<String, State>,
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {
 
-    val activeScreen: String? = null
+    var activeScreenId: String? = null
 
     val selectedOptionId: Int? = null
     override val usedPortsIds: Array<String>
@@ -31,6 +31,8 @@ class NsPanelAutomationUnit(
     }
 
     fun changeScreen(screenId: String, options: Array<String>) {
-        TODO("Not yet implemented")
+        activeScreenId = screenId
+        //TODO
+        //port.sendCommand(ChangeScreenCommand())
     }
 }

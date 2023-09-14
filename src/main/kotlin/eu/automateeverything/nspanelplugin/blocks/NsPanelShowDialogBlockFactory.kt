@@ -73,6 +73,9 @@ class NsPanelShowDialogBlockFactory : StatementBlockFactory {
             val evaluator = context.automationUnitsCache[context.instance.id] as NsPanelAutomationUnit
 
             var optionNodes = LinkedHashMap<String, StatementNode>()
+            var headlineField = block.fields?.firstOrNull { it.name == "HEADLINE"}
+                ?: throw MalformedBlockException(NsPanelOptionBlockFactory.TYPE, "There should be a HEADLINE field inside.")
+            val headline = headlineField.value!!
 
             if (block.statements != null) {
                 val iOptionStatement = block.statements!!.find { it.name == "OPTIONS" }
@@ -80,7 +83,7 @@ class NsPanelShowDialogBlockFactory : StatementBlockFactory {
                 if (iBlock != null) {
                     var order = 0
                     while (iBlock != null) {
-                        val labelField = iBlock.fields!!.firstOrNull { it.name == "LABEL" }
+                        val labelField = iBlock.fields?.firstOrNull { it.name == "LABEL" }
                             ?: throw MalformedBlockException(NsPanelOptionBlockFactory.TYPE, "There should be a LABEL field inside.")
                         val label = labelField.value!!
                         val optionNode = transformer.transformStatement(iBlock, context, order)
@@ -92,7 +95,7 @@ class NsPanelShowDialogBlockFactory : StatementBlockFactory {
             }
 
             //TODO: Create a random screen id here
-            return NsPanelShowDialogAutomationNode(next, "screenId", evaluator, optionNodes)
+            return NsPanelShowDialogAutomationNode(next, "screenId", headline, evaluator, optionNodes)
         }
 
         throw MalformedBlockException(

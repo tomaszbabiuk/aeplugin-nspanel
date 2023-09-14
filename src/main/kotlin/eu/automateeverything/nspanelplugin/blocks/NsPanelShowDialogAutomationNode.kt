@@ -23,12 +23,13 @@ import java.util.*
 class NsPanelShowDialogAutomationNode(
     override val next: StatementNode?,
     private val screenId: String,
+    headline: String,
     private val nsPanelDevice: NsPanelAutomationUnit,
     private val options: LinkedHashMap<String, StatementNode>,
     ) : StatementNodeBase() {
 
     override fun process(now: Calendar, firstLoop: Boolean) {
-        if (nsPanelDevice.activeScreen != screenId) {
+        if (nsPanelDevice.activeScreenId != screenId) {
             nsPanelDevice.changeScreen(screenId, options.keys.toTypedArray())
         }
 
