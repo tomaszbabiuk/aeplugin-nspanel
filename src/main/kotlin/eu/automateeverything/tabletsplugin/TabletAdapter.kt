@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin
+package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.DiscoveryMode
@@ -22,7 +22,7 @@ import eu.automateeverything.domain.hardware.Port
 import eu.automateeverything.domain.hardware.PortIdBuilder
 import kotlinx.coroutines.*
 
-class NsPanelAdapter(
+class TabletAdapter(
     owningPluginId: String,
     eventBus: EventBus) : HardwareAdapterBase<Port<*>>(owningPluginId, "0", eventBus) {
     var operationScope: CoroutineScope? = null

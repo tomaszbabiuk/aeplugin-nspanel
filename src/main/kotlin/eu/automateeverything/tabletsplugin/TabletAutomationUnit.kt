@@ -1,4 +1,4 @@
-package eu.automateeverything.nspanelplugin
+package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.automation.State
 import eu.automateeverything.data.configurables.ControlType
@@ -7,7 +7,7 @@ import eu.automateeverything.domain.automation.StateDeviceAutomationUnitBase
 import eu.automateeverything.domain.events.EventBus
 import java.util.*
 
-class NsPanelAutomationUnit(
+class TabletAutomationUnit(
     eventBus: EventBus,
     instance: InstanceDto,
     name: String,

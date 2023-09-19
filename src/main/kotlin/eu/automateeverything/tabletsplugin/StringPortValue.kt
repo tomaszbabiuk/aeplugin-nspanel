@@ -1,4 +1,4 @@
-package eu.automateeverything.nspanelplugin
+package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.hardware.PortValue
 import eu.automateeverything.data.localization.Resource

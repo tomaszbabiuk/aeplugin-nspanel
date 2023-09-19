@@ -13,24 +13,27 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin.blocks
+package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.domain.automation.StatementNode
 import eu.automateeverything.domain.automation.StatementNodeBase
-import eu.automateeverything.nspanelplugin.NsPanelAutomationUnit
+import eu.automateeverything.tabletsplugin.TabletAutomationUnit
 import java.util.*
 
-class NsPanelOptionAutomationNode(
+class ShowDialogAutomationNode(
     override val next: StatementNode?,
-    private val insideNode: StatementNode?,
-    private val optionId: Int?,
-    private val nsPanelDevice: NsPanelAutomationUnit,
+    private val screenId: String,
+    headline: String,
+    private val nsPanelDevice: TabletAutomationUnit,
+    private val options: LinkedHashMap<String, StatementNode>,
     ) : StatementNodeBase() {
 
     override fun process(now: Calendar, firstLoop: Boolean) {
-        if (nsPanelDevice.selectedOptionId == optionId) {
-            insideNode?.process(now, firstLoop)
+        if (nsPanelDevice.activeScreenId != screenId) {
+            nsPanelDevice.changeScreen(screenId, options.keys.toTypedArray())
         }
+
+        options.values.forEach { it.process(now, firstLoop) }
 
         next?.process(now, firstLoop)
     }

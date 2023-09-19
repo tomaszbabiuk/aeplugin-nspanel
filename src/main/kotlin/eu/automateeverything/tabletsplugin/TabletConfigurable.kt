@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin
+package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.automation.State
 import eu.automateeverything.data.instances.InstanceDto
@@ -21,12 +21,11 @@ import eu.automateeverything.devices.DevicesConfigurable
 import eu.automateeverything.domain.automation.AutomationUnit
 import eu.automateeverything.domain.configurable.*
 import eu.automateeverything.domain.events.EventBus
-import eu.automateeverything.domain.hardware.BinaryInput
 import eu.automateeverything.domain.hardware.PortFinder
 import org.pf4j.Extension
 
 @Extension
-class NsPanelConfigurable(
+class TabletConfigurable(
     private val portFinder: PortFinder,
     private val eventBus: EventBus
 ) : StateDeviceConfigurable() {
@@ -41,7 +40,7 @@ class NsPanelConfigurable(
         //val port = portFinder.searchForInputPort(BinaryInput::class.java, portId)
         val name = extractFieldValue(instance, nameField)
 
-        return NsPanelAutomationUnit(eventBus, instance, name, states)
+        return TabletAutomationUnit(eventBus, instance, name, states)
     }
 
     override val states: Map<String, State>
@@ -69,10 +68,10 @@ class NsPanelConfigurable(
             return result
         }
 
-    override val addNewRes = R.configurable_nspanel_add
-    override val editRes = R.configurable_nspanel_edit
-    override val titleRes = R.configurable_nspanel_title
-    override val descriptionRes = R.configurable_nspanel_description
+    override val addNewRes = R.configurable_tablet_add
+    override val editRes = R.configurable_tablet_edit
+    override val titleRes = R.configurable_tablet_title
+    override val descriptionRes = R.configurable_tablet_description
 
     override val iconRaw: String
         get() = """

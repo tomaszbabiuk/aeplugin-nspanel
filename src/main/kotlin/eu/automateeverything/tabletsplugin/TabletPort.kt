@@ -1,3 +1,5 @@
+package eu.automateeverything.tabletsplugin
+
 /*
  * Copyright (c) 2019-2023 Tomasz Babiuk
  *
@@ -13,22 +15,16 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin.blocks
+import eu.automateeverything.domain.hardware.InputPort
 
-import eu.automateeverything.domain.automation.BlockFactory
-import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
-import eu.automateeverything.domain.configurable.Configurable
-import org.pf4j.Extension
+class TabletPort(
+    override val id: String,
+    override var lastSeenTimestamp: Long) : InputPort<NSPanelPortValue>
+{
+    override val valueClazz = NSPanelPortValue::class.java
 
-@Extension
-class NsPanelBlocksCollector() : BlockFactoriesCollector {
 
-    override fun collect(thisDevice: Configurable?): List<BlockFactory<*>> {
-        return collectStaticBlocks()
+    override fun read(): NSPanelPortValue {
+        return NSPanelPortValue()
     }
-
-    private fun collectStaticBlocks() = listOf(
-        NsPanelOptionBlockFactory(),
-        NsPanelShowDialogBlockFactory()
-    )
 }

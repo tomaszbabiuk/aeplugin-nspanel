@@ -13,15 +13,23 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin.blocks
+package eu.automateeverything.tabletsplugin.blocks
 
-import eu.automateeverything.data.localization.Resource
-import eu.automateeverything.domain.automation.blocks.BlockCategory
-import eu.automateeverything.nspanelplugin.R
+import eu.automateeverything.domain.automation.BlockFactory
+import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
+import eu.automateeverything.domain.configurable.Configurable
+import org.pf4j.Extension
 
-enum class NsPanelBlockCategories(
-    override val categoryName: Resource,
-    override val color: Int
-) : BlockCategory {
-    NSPanel(R.category_nspanel, 180),
+@Suppress("unused")
+@Extension
+class TabletsBlocksCollector : BlockFactoriesCollector {
+
+    override fun collect(thisDevice: Configurable?): List<BlockFactory<*>> {
+        return collectStaticBlocks()
+    }
+
+    private fun collectStaticBlocks() = listOf(
+        OptionBlockFactory(),
+        ShowDialogBlockFactory()
+    )
 }

@@ -28,8 +28,8 @@ compileKotlin {
 
 jar {
     manifest {
-        attributes 'Plugin-Class': "eu.automateeverything.nspanelplugin.NsPanelPlugin",
-                'Plugin-Id': "nspanel",
+        attributes 'Plugin-Class': "eu.automateeverything.tabletsplugin.TabletsPlugin",
+                'Plugin-Id': "tablets",
                 'Plugin-Version': "0.1.0",
                 'Plugin-Provider': "Tomasz Babiuk",
                 'Plugin-Dependencies': ""

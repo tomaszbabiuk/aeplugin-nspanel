@@ -13,27 +13,27 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin.blocks
+package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
-import eu.automateeverything.nspanelplugin.NsPanelAutomationUnit
-import eu.automateeverything.nspanelplugin.NsPanelConfigurable
-import eu.automateeverything.nspanelplugin.R
+import eu.automateeverything.tabletsplugin.TabletAutomationUnit
+import eu.automateeverything.tabletsplugin.TabletConfigurable
+import eu.automateeverything.tabletsplugin.R
 import java.util.LinkedHashMap
 
-class NsPanelShowDialogBlockFactory : StatementBlockFactory {
+class ShowDialogBlockFactory : StatementBlockFactory {
 
-    override val category = NsPanelBlockCategories.NSPanel
+    override val category = TabletsBlockCategories.Tablets
 
-    override val type: String = "nspanel_show_dialog"
+    override val type: String = "tablet_show_dialog"
 
     override fun buildBlock(): RawJson {
         return RawJson { language ->
             """
                 {
                   "type": "$type",
-                  "message0": "${R.block_nspanel_show_dialog_message.getValue(language)}",
+                  "message0": "${R.block_tablets_show_dialog_message.getValue(language)}",
                   "args0": [
                     {
                       "type": "input_dummy",
@@ -50,7 +50,7 @@ class NsPanelShowDialogBlockFactory : StatementBlockFactory {
                     {
                       "type": "input_statement",
                       "name": "OPTIONS",
-                      "check": "${NsPanelOptionBlockFactory.TYPE}"
+                      "check": "${OptionBlockFactory.TYPE}"
                     }
                   ],
                   "previousStatement": null,
@@ -69,12 +69,12 @@ class NsPanelShowDialogBlockFactory : StatementBlockFactory {
         transformer: BlocklyTransformer,
         order: Int
     ): StatementNode {
-        if (context.thisDevice is NsPanelConfigurable) {
-            val evaluator = context.automationUnitsCache[context.instance.id] as NsPanelAutomationUnit
+        if (context.thisDevice is TabletConfigurable) {
+            val evaluator = context.automationUnitsCache[context.instance.id] as TabletAutomationUnit
 
             var optionNodes = LinkedHashMap<String, StatementNode>()
             var headlineField = block.fields?.firstOrNull { it.name == "HEADLINE"}
-                ?: throw MalformedBlockException(NsPanelOptionBlockFactory.TYPE, "There should be a HEADLINE field inside.")
+                ?: throw MalformedBlockException(OptionBlockFactory.TYPE, "There should be a HEADLINE field inside.")
             val headline = headlineField.value!!
 
             if (block.statements != null) {
@@ -84,7 +84,7 @@ class NsPanelShowDialogBlockFactory : StatementBlockFactory {
                     var order = 0
                     while (iBlock != null) {
                         val labelField = iBlock.fields?.firstOrNull { it.name == "LABEL" }
-                            ?: throw MalformedBlockException(NsPanelOptionBlockFactory.TYPE, "There should be a LABEL field inside.")
+                            ?: throw MalformedBlockException(OptionBlockFactory.TYPE, "There should be a LABEL field inside.")
                         val label = labelField.value!!
                         val optionNode = transformer.transformStatement(iBlock, context, order)
                         optionNodes[label] = optionNode
@@ -95,12 +95,12 @@ class NsPanelShowDialogBlockFactory : StatementBlockFactory {
             }
 
             //TODO: Create a random screen id here
-            return NsPanelShowDialogAutomationNode(next, "screenId", headline, evaluator, optionNodes)
+            return ShowDialogAutomationNode(next, "screenId", headline, evaluator, optionNodes)
         }
 
         throw MalformedBlockException(
             block.type,
-            "it's impossible to connect this block with correct ${NsPanelConfigurable::class.java}"
+            "it's impossible to connect this block with correct ${TabletConfigurable::class.java}"
         )
     }
 }

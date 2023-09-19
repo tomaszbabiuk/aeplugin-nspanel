@@ -1,5 +1,3 @@
-package eu.automateeverything.nspanelplugin
-
 /*
  * Copyright (c) 2019-2023 Tomasz Babiuk
  *
@@ -15,16 +13,15 @@ package eu.automateeverything.nspanelplugin
  *  limitations under the License.
  */
 
-import eu.automateeverything.domain.hardware.InputPort
+package eu.automateeverything.tabletsplugin.blocks
 
-class NsPanelPort(
-    override val id: String,
-    override var lastSeenTimestamp: Long) : InputPort<NSPanelPortValue>
-{
-    override val valueClazz = NSPanelPortValue::class.java
+import eu.automateeverything.data.localization.Resource
+import eu.automateeverything.domain.automation.blocks.BlockCategory
+import eu.automateeverything.tabletsplugin.R
 
-
-    override fun read(): NSPanelPortValue {
-        return NSPanelPortValue()
-    }
+enum class TabletsBlockCategories(
+    override val categoryName: Resource,
+    override val color: Int
+) : BlockCategory {
+    Tablets(R.category_tablets, 180),
 }
