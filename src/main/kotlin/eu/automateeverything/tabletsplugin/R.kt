@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin
+package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.localization.Resource
 
@@ -28,24 +28,24 @@ object R {
         "Nieaktywny"
     )
 
-    val configurable_nspanel_add = Resource(
-        "Add NSPanel",
-        "Dodaj NSPanel"
+    val configurable_tablet_add = Resource(
+        "Add tablet",
+        "Dodaj tablet"
     )
 
-    val configurable_nspanel_edit = Resource(
-        "Edit NSPanel",
-        "Edytuj NSPanel"
+    val configurable_tablet_edit = Resource(
+        "Edit tablet",
+        "Edytuj tablet"
     )
 
-    val configurable_nspanel_title = Resource(
-        "NSPanels",
-        "Urządzenia NSPanel"
+    val configurable_tablet_title = Resource(
+        "Tablets",
+        "Tablety"
     )
 
-    val configurable_nspanel_description = Resource(
-        "A custom control over Sonoff NSPanel.",
-        "Kontroler dla Sonoff NSPanel."
+    val configurable_tablet_description = Resource(
+        "A custom control over Android tablet.",
+        "Kontroler dla tabletów z Androidem."
     )
 
     val field_port_hint = Resource(
@@ -59,13 +59,13 @@ object R {
     )
 
     val plugin_name = Resource(
-        "NSPanel",
-        "NSPanel"
+        "Tablets",
+        "Tablety"
     )
 
     val plugin_description = Resource(
-        "A support for Sonoff NSPanel",
-        "Wsparcie dla Sonoff NSPanel"
+        "A support for wall tablets running Android OS",
+        "Wsparcie dla tabletów ściennych pracujących pod kontrolą systemu Android"
     )
 
     val n_a = Resource(
@@ -73,17 +73,17 @@ object R {
         "nd."
     )
 
-    val category_nspanel = Resource(
-        "NSPanel",
-        "NSPanel"
+    val category_tablets = Resource(
+        "Tablets",
+        "Tablety"
     )
 
-    val block_nspanel_option_message = Resource(
+    val block_tablets_option_message = Resource(
         "%1 Option: %2 %3",
         "%1 Opcja: %2 %3"
     )
 
-    val block_nspanel_show_dialog_message = Resource(
+    val block_tablets_show_dialog_message = Resource(
         "Show dialog %1 Headline %2 %3 Options %4",
         "Pokaż dialog %1 Nagłówek %2 %3 Opcje %4"
     )

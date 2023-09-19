@@ -13,20 +13,20 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin.blocks
+package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
-import eu.automateeverything.nspanelplugin.NsPanelAutomationUnit
-import eu.automateeverything.nspanelplugin.NsPanelConfigurable
-import eu.automateeverything.nspanelplugin.R
+import eu.automateeverything.tabletsplugin.TabletAutomationUnit
+import eu.automateeverything.tabletsplugin.TabletConfigurable
+import eu.automateeverything.tabletsplugin.R
 
-class NsPanelOptionBlockFactory : StatementBlockFactory {
+class OptionBlockFactory : StatementBlockFactory {
 
     companion object {
-        const val TYPE = "nspanel_option"
+        const val TYPE = "tablet_option"
     }
-    override val category = NsPanelBlockCategories.NSPanel
+    override val category = TabletsBlockCategories.Tablets
 
     override val type: String = TYPE
 
@@ -35,7 +35,7 @@ class NsPanelOptionBlockFactory : StatementBlockFactory {
             """
                 {
                   "type": "$type",
-                  "message0": "${R.block_nspanel_option_message.getValue(it)}",
+                  "message0": "${R.block_tablets_option_message.getValue(it)}",
                   "args0": [
                     {
                       "type": "input_dummy"
@@ -66,8 +66,8 @@ class NsPanelOptionBlockFactory : StatementBlockFactory {
         transformer: BlocklyTransformer,
         order: Int
     ): StatementNode {
-        if (context.thisDevice is NsPanelConfigurable) {
-            val evaluator = context.automationUnitsCache[context.instance.id] as NsPanelAutomationUnit
+        if (context.thisDevice is TabletConfigurable) {
+            val evaluator = context.automationUnitsCache[context.instance.id] as TabletAutomationUnit
 
             var insideNode: StatementNode? = null
 
@@ -78,9 +78,9 @@ class NsPanelOptionBlockFactory : StatementBlockFactory {
                 }
             }
 
-            return NsPanelOptionAutomationNode(next, insideNode, order, evaluator)
+            return OptionAutomationNode(next, insideNode, order, evaluator)
         }
 
-        throw MalformedBlockException(block.type, "it's impossible to connect this block with correct ${NsPanelConfigurable::class.java}")
+        throw MalformedBlockException(block.type, "it's impossible to connect this block with correct ${TabletConfigurable::class.java}")
     }
 }

@@ -1,4 +1,4 @@
-package eu.automateeverything.nspanelplugin
+package eu.automateeverything.tabletsplugin
 
 /*
  * Copyright (c) 2019-2023 Tomasz Babiuk
@@ -17,14 +17,14 @@ package eu.automateeverything.nspanelplugin
 
 import eu.automateeverything.domain.hardware.InputPort
 
-class NsPanelPort(
+class TabletPort(
     override val id: String,
-    override var lastSeenTimestamp: Long) : InputPort<NSPanelPortValue>
+    override var lastSeenTimestamp: Long) : InputPort<DataPortValue>
 {
-    override val valueClazz = NSPanelPortValue::class.java
+    override val valueClazz = DataPortValue::class.java
 
 
-    override fun read(): NSPanelPortValue {
-        return NSPanelPortValue()
+    override fun read(): DataPortValue {
+        return DataPortValue()
     }
 }

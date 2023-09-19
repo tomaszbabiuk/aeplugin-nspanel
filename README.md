@@ -1,14 +1,14 @@
 # Welcome
 
-This is a plugin for [Automate-Everything](https://github.com/tomaszbabiuk/automate-everything). It allows to control Sonoff NSPanels.
-The compatible firmware for Sonoff NSPanel is developed [here](https://github.com/tomaszbabiuk/aeplugin-nspanel-firmware).
+This is a plugin for [Automate-Everything](https://github.com/tomaszbabiuk/automate-everything). It allows to control wall tablets running Android OS.
+The mobile app for tablets is developed [here](https://github.com/tomaszbabiuk/aeplugin-tablets-android).
 
 # Directory setup
 ```bash
 md work
 cd work
 git clone https://github.com/tomaszbabiuk/automate-everything.git
-git clone https://github.com/tomaszbabiuk/aeplugin-nspanel.git
+git clone https://github.com/tomaszbabiuk/aeplugin-tablets.git
 ```
 
 # Automate-Everything frontend installation
@@ -29,7 +29,7 @@ After running this task, the backend application is installed in 'automate-every
 
 # Plugin installation
 ```bash
-cd aeplugin-nspanel
+cd aeplugin-tablets
 gradlew.bat buildForAutomateEverything
 ```
 After running this task, the plugin is installed in 'automate-everything/output/plugins' folder 

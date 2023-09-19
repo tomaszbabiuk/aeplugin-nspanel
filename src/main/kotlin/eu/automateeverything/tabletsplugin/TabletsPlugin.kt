@@ -13,7 +13,7 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin
+package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.localization.Resource
 import eu.automateeverything.data.plugins.PluginCategory
@@ -23,12 +23,12 @@ import eu.automateeverything.domain.hardware.HardwareAdapter
 import eu.automateeverything.domain.hardware.HardwarePlugin
 import org.pf4j.PluginWrapper
 
-class NsPanelPlugin(
+class TabletsPlugin(
     wrapper: PluginWrapper,
     private val eventBus: EventBus
 ) : HardwarePlugin(wrapper), PluginMetadata {
     override fun createAdapters(): List<HardwareAdapter<*>> {
-        val adapter = NsPanelAdapter(pluginId, eventBus)
+        val adapter = TabletAdapter(pluginId, eventBus)
         return listOf(adapter)
     }
 

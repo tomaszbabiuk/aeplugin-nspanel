@@ -13,22 +13,23 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin.blocks
+package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.domain.automation.BlockFactory
 import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
 import eu.automateeverything.domain.configurable.Configurable
 import org.pf4j.Extension
 
+@Suppress("unused")
 @Extension
-class NsPanelBlocksCollector() : BlockFactoriesCollector {
+class TabletsBlocksCollector : BlockFactoriesCollector {
 
     override fun collect(thisDevice: Configurable?): List<BlockFactory<*>> {
         return collectStaticBlocks()
     }
 
     private fun collectStaticBlocks() = listOf(
-        NsPanelOptionBlockFactory(),
-        NsPanelShowDialogBlockFactory()
+        OptionBlockFactory(),
+        ShowDialogBlockFactory()
     )
 }

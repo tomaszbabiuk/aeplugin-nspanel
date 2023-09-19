@@ -13,15 +13,15 @@
  *  limitations under the License.
  */
 
-package eu.automateeverything.nspanelplugin.blocks
+package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.localization.Resource
 import eu.automateeverything.domain.automation.blocks.BlockCategory
-import eu.automateeverything.nspanelplugin.R
+import eu.automateeverything.tabletsplugin.R
 
-enum class NsPanelBlockCategories(
+enum class TabletsBlockCategories(
     override val categoryName: Resource,
     override val color: Int
 ) : BlockCategory {
-    NSPanel(R.category_nspanel, 180),
+    Tablets(R.category_tablets, 180),
 }
