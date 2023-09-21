@@ -48,6 +48,10 @@ dependencies {
     kapt "org.pf4j:pf4j:$pf4jVersion"
     annotationProcessor "org.pf4j:pf4j:$pf4jVersion"
 
+    //californium
+    implementation 'org.eclipse.californium:californium-core:3.8.0'
+
+
     //kotlin
     shadow "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     shadow "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion"

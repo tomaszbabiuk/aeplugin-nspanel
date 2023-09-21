@@ -21,14 +21,17 @@ import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.extensibility.PluginMetadata
 import eu.automateeverything.domain.hardware.HardwareAdapter
 import eu.automateeverything.domain.hardware.HardwarePlugin
+import eu.automateeverything.domain.langateway.LanGatewayResolver
 import org.pf4j.PluginWrapper
 
+@Suppress("unused")
 class TabletsPlugin(
     wrapper: PluginWrapper,
+    private val lanGatewayResolver: LanGatewayResolver,
     private val eventBus: EventBus
 ) : HardwarePlugin(wrapper), PluginMetadata {
     override fun createAdapters(): List<HardwareAdapter<*>> {
-        val adapter = TabletAdapter(pluginId, eventBus)
+        val adapter = TabletAdapter(pluginId, lanGatewayResolver, eventBus)
         return listOf(adapter)
     }
 
