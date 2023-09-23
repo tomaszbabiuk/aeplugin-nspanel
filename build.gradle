@@ -43,6 +43,10 @@ dependencies {
     shadow 'eu.automateeverything:domain:0.1'
     shadow 'eu.automateeverything:conditions:0.1'
 
+    //serialization
+    shadow "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinSerializationVersion"
+    shadow "org.jetbrains.kotlinx:kotlinx-serialization-cbor:$cborVersion"
+
     //pf4j
     shadow "org.pf4j:pf4j:$pf4jVersion"
     kapt "org.pf4j:pf4j:$pf4jVersion"

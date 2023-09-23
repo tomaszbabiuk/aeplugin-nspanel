@@ -23,80 +23,25 @@ import eu.automateeverything.domain.hardware.Port
 import eu.automateeverything.domain.hardware.PortIdBuilder
 import eu.automateeverything.domain.langateway.LanGatewayResolver
 import kotlinx.coroutines.*
+import kotlinx.serialization.cbor.Cbor
 import java.net.InetAddress
-
 
 class TabletAdapter(
     owningPluginId: String,
     private val lanGatewayResolver: LanGatewayResolver,
     eventBus: EventBus) : HardwareAdapterBase<Port<*>>(owningPluginId, "0", eventBus) {
-    private val coapDiscovery = CoAPDiscovery()
+    private val coapDiscovery = CoAPDiscovery(Cbor, lanGatewayResolver) {
+        eventBus.broadcastDiscoveryEvent(owningPluginId, it)
+    }
 
     private val idBuilder = PortIdBuilder(owningPluginId)
 
     override suspend fun internalDiscovery(mode: DiscoveryMode) = coroutineScope {
-        discoverWithCoRE()
-        discoverOnLAN()
+        val forced = coapDiscovery.discoverByForceScanning()
+        println(forced)
     }
 
-    private suspend fun discoverOnLAN() = withContext(Dispatchers.IO) {
-        val gateway = lanGatewayResolver.resolve()
-        gateway.forEach {
-            val gatewayIP = it.inet4Address.address
 
-            val lookupAddressBegin = InetAddress.getByAddress(
-                byteArrayOf(
-                    gatewayIP[0], gatewayIP[1], gatewayIP[2],
-                    0.toByte()
-                )
-            )
-            val lookupAddressEnd = InetAddress.getByAddress(
-                byteArrayOf(
-                    gatewayIP[0], gatewayIP[1], gatewayIP[2],
-                    255.toByte()
-                )
-            )
-
-            eventBus.broadcastDiscoveryEvent(
-                owningPluginId,
-                "Looking for CoRE devices in LAN, the IP address range is $lookupAddressBegin - $lookupAddressEnd"
-            )
-
-
-            val jobs = ArrayList<Deferred<Unit>>()
-
-            for (i in 0..255) {
-                val ipToCheck = InetAddress.getByAddress(
-                    byteArrayOf(
-                        gatewayIP[0],
-                        gatewayIP[1],
-                        gatewayIP[2],
-                        i.toByte()
-                    )
-                )
-
-                val job = async(start = CoroutineStart.LAZY) {
-                    coapDiscovery.discover(ipToCheck)
-                }
-                jobs.add(job)
-            }
-
-            val result = jobs.awaitAll()
-                .filterNotNull()
-                .toList()
-        }
-    }
-
-    private fun discoverWithCoRE() {
-        val multicastAddresses = lanGatewayResolver.resolve().flatMap { it.broadcastAddresses }
-        try {
-            multicastAddresses.forEach {
-                coapDiscovery.discover(it)
-            }
-        } catch (ex: Exception) {
-            eventBus.broadcastDiscoveryEvent(owningPluginId, "CoAP discovery failed: ${ex.message}")
-        }
-    }
 
     override fun executePendingChanges() {
     }
