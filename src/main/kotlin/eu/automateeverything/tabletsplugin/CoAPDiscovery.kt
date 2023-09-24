@@ -1,6 +1,6 @@
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.domain.coap.AutomateEverythingVersionManifest
+import eu.automateeverything.data.coap.VersionManifestDto
 import eu.automateeverything.domain.langateway.LanGatewayResolver
 import kotlinx.coroutines.*
 import kotlinx.serialization.BinaryFormat
@@ -12,11 +12,12 @@ import java.net.InetAddress
 class CoAPDiscovery(private val binaryFormat: BinaryFormat, private val lanGatewayResolver: LanGatewayResolver, private val progressReporter: (message: String) -> Unit) {
     private val coapPort = 5683
 
-    suspend fun discoverByForceScanning() : List<AutomateEverythingVersionManifest> = coroutineScope{
-        val result = ArrayList<AutomateEverythingVersionManifest>()
-        val gateway = lanGatewayResolver.resolve()
-        gateway.forEach {
-            val gatewayIP = it.inet4Address.address
+    @OptIn(ExperimentalCoroutinesApi::class)
+    suspend fun discoverByForceScanning() : Map<InetAddress, VersionManifestDto> = coroutineScope{
+        val result = HashMap<InetAddress,VersionManifestDto>()
+        val gateways = lanGatewayResolver.resolve()
+        gateways.forEach { gateway ->
+            val gatewayIP = gateway.inet4Address.address
 
             val lookupAddressBegin = InetAddress.getByAddress(
                 byteArrayOf(
@@ -33,7 +34,7 @@ class CoAPDiscovery(private val binaryFormat: BinaryFormat, private val lanGatew
 
             progressReporter("Looking for CoRE devices in LAN, the IP address range is $lookupAddressBegin - $lookupAddressEnd")
 
-            val jobs = ArrayList<Deferred<AutomateEverythingVersionManifest?>>()
+            val jobs = HashMap<InetAddress, Deferred<VersionManifestDto?>>()
 
             for (i in 0..255) {
                 val ipToCheck = InetAddress.getByAddress(
@@ -48,20 +49,24 @@ class CoAPDiscovery(private val binaryFormat: BinaryFormat, private val lanGatew
                 val job = async(start = CoroutineStart.LAZY) {
                     discover(ipToCheck)
                 }
-                jobs.add(job)
+                jobs[ipToCheck] = job
             }
 
-            val discovered = jobs.awaitAll()
-                .filterNotNull()
-                .toList()
 
-            result.addAll(discovered)
+            jobs.values.awaitAll()
+
+            jobs
+                .filter { it.value.getCompleted() != null }
+                .forEach {
+                    result[it.key] = it.value.getCompleted()!!
+                }
+
         }
 
         return@coroutineScope result
     }
 
-    private fun discover(address: InetAddress) : AutomateEverythingVersionManifest? {
+    private fun discover(address: InetAddress) : VersionManifestDto? {
         val client = CoapClient("coap:/${address}:$coapPort/.well-known/core")
         client.timeout = 5000
 
@@ -85,13 +90,13 @@ class CoAPDiscovery(private val binaryFormat: BinaryFormat, private val lanGatew
         return null
     }
 
-    private fun readManifest(address: InetAddress): AutomateEverythingVersionManifest {
+    private fun readManifest(address: InetAddress): VersionManifestDto {
         val client = CoapClient("coap:/${address}:$coapPort/automateeverything")
         client.timeout = 5000
 
         try {
             val response: CoapResponse? = client.get()
-            return binaryFormat.decodeFromByteArray(AutomateEverythingVersionManifest.serializer(), response!!.payload)
+            return binaryFormat.decodeFromByteArray(VersionManifestDto.serializer(), response!!.payload)
         } finally {
             client.shutdown()
         }
