@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2019-2023 Tomasz Babiuk
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  You may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.coap.VersionManifestDto
@@ -9,12 +24,16 @@ import org.eclipse.californium.core.CoapResponse
 import org.eclipse.californium.core.coap.LinkFormat
 import java.net.InetAddress
 
-class CoAPDiscovery(private val binaryFormat: BinaryFormat, private val lanGatewayResolver: LanGatewayResolver, private val progressReporter: (message: String) -> Unit) {
+class CoAPDiscovery(
+    private val binaryFormat: BinaryFormat,
+    private val lanGatewayResolver: LanGatewayResolver,
+    private val progressReporter: (message: String) -> Unit
+) {
     private val coapPort = 5683
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun discoverByForceScanning() : Map<InetAddress, VersionManifestDto> = coroutineScope{
-        val result = HashMap<InetAddress,VersionManifestDto>()
+    suspend fun discoverByForceScanning(): Map<InetAddress, VersionManifestDto> = coroutineScope {
+        val result = HashMap<InetAddress, VersionManifestDto>()
         val gateways = lanGatewayResolver.resolve()
         gateways.forEach { gateway ->
             val gatewayIP = gateway.inet4Address.address
@@ -66,7 +85,7 @@ class CoAPDiscovery(private val binaryFormat: BinaryFormat, private val lanGatew
         return@coroutineScope result
     }
 
-    private fun discover(address: InetAddress) : VersionManifestDto? {
+    private fun discover(address: InetAddress): VersionManifestDto? {
         val client = CoapClient("coap:/${address}:$coapPort/.well-known/core")
         client.timeout = 5000
 
@@ -74,15 +93,22 @@ class CoAPDiscovery(private val binaryFormat: BinaryFormat, private val lanGatew
             val response: CoapResponse? = client.get()
 
             if (response != null && response.isSuccess) {
+
+                progressReporter("CoAP device found at $address")
                 val links = LinkFormat.parse(response.responseText)
-                val aeLink = links.filter { it.uri == "/automateeverything"}
+                val aeLink = links.filter { it.uri == "/automateeverything" }
                 if (aeLink.isNotEmpty()) {
-                    return readManifest(address)
+                    progressReporter("Potential AE tablet, checking manifest of $address")
+                    val manifest = readManifest(address)
+                    if (manifest != null) {
+                        progressReporter("AE tablet found: ${manifest.uniqueId}, v${manifest.versionMajor}.${manifest.versionMinor}")
+                    }
+                    return manifest
                 }
             } else {
                 System.err.println("Error: Unable to perform CoAP multicast request")
             }
-        } catch (ignored:Exception) {
+        } catch (ignored: Exception) {
         } finally {
             client.shutdown()
         }
@@ -90,15 +116,19 @@ class CoAPDiscovery(private val binaryFormat: BinaryFormat, private val lanGatew
         return null
     }
 
-    private fun readManifest(address: InetAddress): VersionManifestDto {
+    private fun readManifest(address: InetAddress): VersionManifestDto? {
         val client = CoapClient("coap:/${address}:$coapPort/automateeverything")
         client.timeout = 5000
 
         try {
             val response: CoapResponse? = client.get()
-            return binaryFormat.decodeFromByteArray(VersionManifestDto.serializer(), response!!.payload)
+            if (response != null) {
+                return binaryFormat.decodeFromByteArray(VersionManifestDto.serializer(), response.payload)
+            }
         } finally {
             client.shutdown()
         }
+
+        return null
     }
 }

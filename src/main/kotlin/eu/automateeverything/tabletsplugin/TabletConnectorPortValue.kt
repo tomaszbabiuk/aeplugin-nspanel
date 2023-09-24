@@ -15,19 +15,16 @@
 
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.domain.hardware.InputPort
-import java.net.InetAddress
+import eu.automateeverything.data.hardware.PortValue
+import eu.automateeverything.data.localization.Resource
+import java.math.BigDecimal
 
-class TabletPort(
-    override val id: String,
-    override var lastSeenTimestamp: Long,
-    val inetAddress: InetAddress) : InputPort<TabletConnectorPortValue>
-{
-    override val valueClazz = TabletConnectorPortValue::class.java
+class TabletConnectorPortValue: PortValue {
+    override fun toFormattedString(): Resource {
+        return R.n_a
+    }
 
-
-
-    override fun read(): TabletConnectorPortValue {
-        return TabletConnectorPortValue()
+    override fun asDecimal(): BigDecimal {
+        return BigDecimal.ZERO
     }
 }

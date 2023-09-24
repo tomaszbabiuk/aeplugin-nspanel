@@ -16,6 +16,7 @@
 package eu.automateeverything.tabletsplugin
 
 
+import eu.automateeverything.data.coap.VersionManifestDto
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.DiscoveryMode
 import eu.automateeverything.domain.hardware.HardwareAdapterBase
@@ -25,23 +26,35 @@ import eu.automateeverything.domain.langateway.LanGatewayResolver
 import kotlinx.coroutines.*
 import kotlinx.serialization.cbor.Cbor
 import java.net.InetAddress
+import java.util.Calendar
 
 class TabletAdapter(
     owningPluginId: String,
     private val lanGatewayResolver: LanGatewayResolver,
     eventBus: EventBus) : HardwareAdapterBase<Port<*>>(owningPluginId, "0", eventBus) {
+
     private val coapDiscovery = CoAPDiscovery(Cbor, lanGatewayResolver) {
-        eventBus.broadcastDiscoveryEvent(owningPluginId, it)
+        logDiscovery(it)
     }
 
     private val idBuilder = PortIdBuilder(owningPluginId)
 
     override suspend fun internalDiscovery(mode: DiscoveryMode) = coroutineScope {
         val forced = coapDiscovery.discoverByForceScanning()
-        println(forced)
+        val now = Calendar.getInstance()
+        val ports = forced.map {
+            buildTabletPort(it.key, it.value, now.timeInMillis)
+        }
+
+        logDiscovery("Ports found: ${ports.size}")
+
+        addPotentialNewPorts(ports)
     }
 
-
+    private fun buildTabletPort(address: InetAddress, manifest: VersionManifestDto, now: Long): TabletPort {
+        val portId = idBuilder.buildPortId("TAB", manifest.uniqueId, "DATA")
+        return TabletPort(portId, now, address)
+    }
 
     override fun executePendingChanges() {
     }

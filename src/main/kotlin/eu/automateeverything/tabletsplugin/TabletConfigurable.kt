@@ -16,6 +16,8 @@
 package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.automation.State
+import eu.automateeverything.data.fields.PortReference
+import eu.automateeverything.data.fields.PortReferenceType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.devices.DevicesConfigurable
 import eu.automateeverything.domain.automation.AutomationUnit
@@ -33,14 +35,21 @@ class TabletConfigurable(
     override val parent: Class<out Configurable>
         get() = DevicesConfigurable::class.java
 
-    private val portField = BinaryInputPortField(FIELD_PORT, R.field_port_hint, RequiredStringValidator())
+    private val portField =
+
+        PortReferenceField(
+            FIELD_PORT,
+            R.field_port_hint,
+            PortReference(TabletConnectorPortValue::class.java, PortReferenceType.Input),
+            RequiredStringValidator()
+        )
 
     override fun buildAutomationUnit(instance: InstanceDto): AutomationUnit<State> {
         val portId = extractFieldValue(instance, portField)
-        //val port = portFinder.searchForInputPort(BinaryInput::class.java, portId)
+        val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
         val name = extractFieldValue(instance, nameField)
 
-        return TabletAutomationUnit(eventBus, instance, name, states)
+        return TabletAutomationUnit(eventBus, instance, name, states, port)
     }
 
     override val states: Map<String, State>
@@ -64,7 +73,7 @@ class TabletConfigurable(
     override val fieldDefinitions: Map<String, FieldDefinition<*>>
         get() {
             val result: MutableMap<String, FieldDefinition<*>> = LinkedHashMap(super.fieldDefinitions)
-//            result[FIELD_PORT] = portField
+            result[FIELD_PORT] = portField
             return result
         }
 
