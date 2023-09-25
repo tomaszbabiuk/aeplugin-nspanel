@@ -18,20 +18,21 @@ package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.coap.VersionManifestDto
 import eu.automateeverything.domain.events.EventBus
-import eu.automateeverything.domain.hardware.DiscoveryMode
-import eu.automateeverything.domain.hardware.HardwareAdapterBase
-import eu.automateeverything.domain.hardware.Port
-import eu.automateeverything.domain.hardware.PortIdBuilder
+import eu.automateeverything.domain.hardware.*
 import eu.automateeverything.domain.langateway.LanGatewayResolver
 import kotlinx.coroutines.*
 import kotlinx.serialization.cbor.Cbor
+import org.eclipse.californium.core.CoapClient
 import java.net.InetAddress
 import java.util.Calendar
 
 class TabletAdapter(
     owningPluginId: String,
     private val lanGatewayResolver: LanGatewayResolver,
-    eventBus: EventBus) : HardwareAdapterBase<Port<*>>(owningPluginId, "0", eventBus) {
+    private val portFinder: PortFinder,
+    eventBus: EventBus) : HardwareAdapterBase<TabletPort>(owningPluginId, "0", eventBus) {
+
+    private var actionClients: List<CoapClient>? = null
 
     private val coapDiscovery = CoAPDiscovery(Cbor, lanGatewayResolver) {
         logDiscovery(it)
@@ -60,9 +61,13 @@ class TabletAdapter(
     }
 
     override fun stop() {
+        actionClients?.forEach {
+            it.shutdown()
+        }
     }
 
     override fun start() {
+        actionClients = ports.map { it.value.subscribeToActions() }
     }
 }
 

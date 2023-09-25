@@ -19,9 +19,6 @@ import eu.automateeverything.data.coap.VersionManifestDto
 import eu.automateeverything.domain.langateway.LanGatewayResolver
 import kotlinx.coroutines.*
 import kotlinx.serialization.BinaryFormat
-import org.eclipse.californium.core.CoapClient
-import org.eclipse.californium.core.CoapResponse
-import org.eclipse.californium.core.coap.LinkFormat
 import java.net.InetAddress
 
 class CoAPDiscovery(
@@ -29,7 +26,6 @@ class CoAPDiscovery(
     private val lanGatewayResolver: LanGatewayResolver,
     private val progressReporter: (message: String) -> Unit
 ) {
-    private val coapPort = 5683
 
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun discoverByForceScanning(): Map<InetAddress, VersionManifestDto> = coroutineScope {
@@ -79,54 +75,19 @@ class CoAPDiscovery(
                 .forEach {
                     result[it.key] = it.value.getCompleted()!!
                 }
-
         }
 
         return@coroutineScope result
     }
 
     private fun discover(address: InetAddress): VersionManifestDto? {
-        val client = CoapClient("coap:/${address}:$coapPort/.well-known/core")
-        client.timeout = 5000
+        val client = AETabletClient(address, 5683, binaryFormat)
+        if (client.isAETablet()) {
+            progressReporter("Potential AE tablet, checking manifest of $address")
+            val manifest = client.readAEManifest()
+            progressReporter("AE tablet found: ${manifest.uniqueId}, v${manifest.versionMajor}.${manifest.versionMinor}")
 
-        try {
-            val response: CoapResponse? = client.get()
-
-            if (response != null && response.isSuccess) {
-
-                progressReporter("CoAP device found at $address")
-                val links = LinkFormat.parse(response.responseText)
-                val aeLink = links.filter { it.uri == "/automateeverything" }
-                if (aeLink.isNotEmpty()) {
-                    progressReporter("Potential AE tablet, checking manifest of $address")
-                    val manifest = readManifest(address)
-                    if (manifest != null) {
-                        progressReporter("AE tablet found: ${manifest.uniqueId}, v${manifest.versionMajor}.${manifest.versionMinor}")
-                    }
-                    return manifest
-                }
-            } else {
-                System.err.println("Error: Unable to perform CoAP multicast request")
-            }
-        } catch (ignored: Exception) {
-        } finally {
-            client.shutdown()
-        }
-
-        return null
-    }
-
-    private fun readManifest(address: InetAddress): VersionManifestDto? {
-        val client = CoapClient("coap:/${address}:$coapPort/automateeverything")
-        client.timeout = 5000
-
-        try {
-            val response: CoapResponse? = client.get()
-            if (response != null) {
-                return binaryFormat.decodeFromByteArray(VersionManifestDto.serializer(), response.payload)
-            }
-        } finally {
-            client.shutdown()
+            return manifest
         }
 
         return null

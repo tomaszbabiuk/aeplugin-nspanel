@@ -16,18 +16,38 @@
 package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.domain.hardware.InputPort
+import org.eclipse.californium.core.CoapClient
+import org.eclipse.californium.core.CoapHandler
+import org.eclipse.californium.core.CoapResponse
 import java.net.InetAddress
 
 class TabletPort(
     override val id: String,
     override var lastSeenTimestamp: Long,
-    val inetAddress: InetAddress) : InputPort<TabletConnectorPortValue>
+    private val inetAddress: InetAddress) : InputPort<TabletConnectorPortValue>
 {
     override val valueClazz = TabletConnectorPortValue::class.java
 
-
-
     override fun read(): TabletConnectorPortValue {
         return TabletConnectorPortValue()
+    }
+
+    fun subscribeToActions(): CoapClient {
+        val uri = "coap:/${inetAddress}:5683/actions"
+
+        val client = CoapClient(uri)
+        client.observe(object : CoapHandler {
+            override fun onLoad(response: CoapResponse) {
+                println(response.code)
+                println(response.options)
+                println(String(response.payload))
+            }
+
+            override fun onError() {
+                println("ERROR")
+            }
+        })
+
+        return client
     }
 }

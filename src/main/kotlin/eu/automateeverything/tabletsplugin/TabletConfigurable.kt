@@ -49,7 +49,7 @@ class TabletConfigurable(
         val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
         val name = extractFieldValue(instance, nameField)
 
-        return TabletAutomationUnit(eventBus, instance, name, states, port)
+        return TabletAutomationUnit(eventBus, instance, name, states, port as TabletPort)
     }
 
     override val states: Map<String, State>

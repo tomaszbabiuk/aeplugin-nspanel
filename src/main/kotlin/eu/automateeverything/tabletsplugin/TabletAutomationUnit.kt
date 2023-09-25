@@ -28,9 +28,8 @@ class TabletAutomationUnit(
     instance: InstanceDto,
     name: String,
     states: Map<String, State>,
-    private val port: Port<*>,
+    private val port: TabletPort,
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {
-
     var activeScreenId: String? = null
 
     val selectedOptionId: Int? = null
