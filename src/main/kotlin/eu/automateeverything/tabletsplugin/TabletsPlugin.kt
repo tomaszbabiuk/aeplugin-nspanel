@@ -15,6 +15,7 @@
 
 package eu.automateeverything.tabletsplugin
 
+import eu.automateeverything.data.Repository
 import eu.automateeverything.data.localization.Resource
 import eu.automateeverything.data.plugins.PluginCategory
 import eu.automateeverything.domain.events.EventBus
@@ -31,10 +32,11 @@ class TabletsPlugin(
     wrapper: PluginWrapper,
     private val lanGatewayResolver: LanGatewayResolver,
     private val portFinder: PortFinder,
-    private val eventBus: EventBus
+    private val eventBus: EventBus,
+    private val repository: Repository
 ) : HardwarePlugin(wrapper), PluginMetadata {
     override fun createAdapters(): List<HardwareAdapter<*>> {
-        val adapter = TabletAdapter(pluginId, lanGatewayResolver, portFinder, eventBus)
+        val adapter = TabletAdapter(pluginId, lanGatewayResolver, portFinder, repository, eventBus)
         return listOf(adapter)
     }
 

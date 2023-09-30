@@ -1,31 +1,32 @@
 package eu.automateeverything.tabletsplugin
 
+import eu.automateeverything.data.coap.ActiveSceneDto
 import eu.automateeverything.data.coap.VersionManifestDto
 import kotlinx.serialization.BinaryFormat
 import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.CoapHandler
 import org.eclipse.californium.core.CoapResponse
 import org.eclipse.californium.core.coap.LinkFormat
+import java.io.IOException
 import java.net.InetAddress
 
 class AETabletClient(private val address: InetAddress, private val port: Int, private val binaryFormat: BinaryFormat) {
-    private inline fun <T : Any> get(endpoint: String, responseHandler: (CoapResponse) -> T) : T {
+    private fun get(endpoint: String, ignoreIOErrors: Boolean = false) : CoapResponse? {
         val uri = "coap:/$address:$port$endpoint"
         val client = CoapClient(uri)
         client.timeout = 5000
 
         try {
-            val response: CoapResponse = client.get()
-            if (response.isSuccess) {
-                return responseHandler(response)
-            } else {
-                error("No success")
-            }
+            return client.get()
         } catch (ex: Exception) {
-            error(ex)
+            if (!ignoreIOErrors) {
+                throw IOException(ex)
+            }
         } finally {
             client.shutdown()
         }
+
+        return null
     }
 
     private fun <T : Any> observe(endpoint: String, responseHandler: (CoapResponse) -> T) : CoapClient  {
@@ -50,24 +51,30 @@ class AETabletClient(private val address: InetAddress, private val port: Int, pr
         return client
     }
 
-    fun subscribeToActions(): CoapClient {
+    fun observeActions(handler: (ActiveSceneDto) -> Unit): CoapClient {
         return observe("/actions") {
-            //TODO
-            //deserialization
+            val activeSceneDto = binaryFormat.decodeFromByteArray(ActiveSceneDto.serializer(), it.payload)
+            handler(activeSceneDto)
         }
     }
 
     fun isAETablet(): Boolean {
-        get("/.well-known/core") { response ->
-            val links = LinkFormat.parse(response.responseText)
+        val rawResponse = get("/.well-known/core", true)
+        if (rawResponse != null && rawResponse.isSuccess) {
+            val links = LinkFormat.parse(rawResponse.responseText)
             val aeLink = links.filter { it.uri == "/automateeverything" }
             return aeLink.isNotEmpty()
         }
+
+        return false
     }
 
-    fun readAEManifest() : VersionManifestDto {
-        get("/automateeverything") {
-            return binaryFormat.decodeFromByteArray(VersionManifestDto.serializer(), it.payload)
+    fun readAEManifest() : VersionManifestDto? {
+        val rawResponse = get("/automateeverything")
+        if (rawResponse != null && rawResponse.isSuccess) {
+            return binaryFormat.decodeFromByteArray(VersionManifestDto.serializer(), rawResponse.payload)
         }
+
+        return null
     }
 }

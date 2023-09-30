@@ -17,6 +17,7 @@ package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.coap.VersionManifestDto
 import eu.automateeverything.domain.langateway.LanGatewayResolver
+import eu.automateeverything.tabletsplugin.TabletAdapter.Companion.COAP_PORT
 import kotlinx.coroutines.*
 import kotlinx.serialization.BinaryFormat
 import java.net.InetAddress
@@ -26,7 +27,6 @@ class CoAPDiscovery(
     private val lanGatewayResolver: LanGatewayResolver,
     private val progressReporter: (message: String) -> Unit
 ) {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun discoverByForceScanning(): Map<InetAddress, VersionManifestDto> = coroutineScope {
         val result = HashMap<InetAddress, VersionManifestDto>()
@@ -51,7 +51,7 @@ class CoAPDiscovery(
 
             val jobs = HashMap<InetAddress, Deferred<VersionManifestDto?>>()
 
-            for (i in 0..255) {
+            for (i in 1..254) {
                 val ipToCheck = InetAddress.getByAddress(
                     byteArrayOf(
                         gatewayIP[0],
@@ -61,12 +61,13 @@ class CoAPDiscovery(
                     )
                 )
 
-                val job = async(start = CoroutineStart.LAZY) {
-                    discover(ipToCheck)
+                if (isReachable(ipToCheck)) {
+                    val job = async(start = CoroutineStart.LAZY) {
+                        discover(ipToCheck)
+                    }
+                    jobs[ipToCheck] = job
                 }
-                jobs[ipToCheck] = job
             }
-
 
             jobs.values.awaitAll()
 
@@ -80,12 +81,24 @@ class CoAPDiscovery(
         return@coroutineScope result
     }
 
+    private fun isReachable(inetAddress: InetAddress): Boolean {
+        try {
+            return inetAddress.isReachable(1000)
+        } catch (ignored: Exception) {
+            return false
+        }
+    }
+
     private fun discover(address: InetAddress): VersionManifestDto? {
-        val client = AETabletClient(address, 5683, binaryFormat)
+        val client = AETabletClient(address, COAP_PORT, binaryFormat)
         if (client.isAETablet()) {
             progressReporter("Potential AE tablet, checking manifest of $address")
             val manifest = client.readAEManifest()
-            progressReporter("AE tablet found: ${manifest.uniqueId}, v${manifest.versionMajor}.${manifest.versionMinor}")
+            if (manifest != null) {
+                progressReporter("AE tablet found: ${manifest.uniqueId}, v${manifest.versionMajor}.${manifest.versionMinor}")
+            } else {
+                progressReporter("Incompatible version of AE tablet.")
+            }
 
             return manifest
         }

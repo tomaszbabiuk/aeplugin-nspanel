@@ -16,25 +16,30 @@
 package eu.automateeverything.tabletsplugin
 
 
+import eu.automateeverything.data.Repository
 import eu.automateeverything.data.coap.VersionManifestDto
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.*
 import eu.automateeverything.domain.langateway.LanGatewayResolver
 import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.cbor.Cbor
 import org.eclipse.californium.core.CoapClient
 import java.net.InetAddress
 import java.util.Calendar
 
+@OptIn(ExperimentalSerializationApi::class)
 class TabletAdapter(
     owningPluginId: String,
     private val lanGatewayResolver: LanGatewayResolver,
     private val portFinder: PortFinder,
+    private val repository: Repository,
     eventBus: EventBus) : HardwareAdapterBase<TabletPort>(owningPluginId, "0", eventBus) {
 
     private var actionClients: List<CoapClient>? = null
+    private val binaryFormat = Cbor
 
-    private val coapDiscovery = CoAPDiscovery(Cbor, lanGatewayResolver) {
+    private val coapDiscovery = CoAPDiscovery(binaryFormat, lanGatewayResolver) {
         logDiscovery(it)
     }
 
@@ -54,20 +59,25 @@ class TabletAdapter(
 
     private fun buildTabletPort(address: InetAddress, manifest: VersionManifestDto, now: Long): TabletPort {
         val portId = idBuilder.buildPortId("TAB", manifest.uniqueId, "DATA")
-        return TabletPort(portId, now, address)
+        val aeClient = AETabletClient(address, COAP_PORT, binaryFormat)
+        val port = TabletPort(portId, now, aeClient)
+        port.start()
+        return port
     }
 
     override fun executePendingChanges() {
     }
 
     override fun stop() {
-        actionClients?.forEach {
-            it.shutdown()
-        }
+        ports.values.forEach { it.stop() }
     }
 
     override fun start() {
-        actionClients = ports.map { it.value.subscribeToActions() }
+
+    }
+
+    companion object {
+        const val COAP_PORT = 5683
     }
 }
 
