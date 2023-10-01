@@ -82,10 +82,10 @@ class CoAPDiscovery(
     }
 
     private fun isReachable(inetAddress: InetAddress): Boolean {
-        try {
-            return inetAddress.isReachable(1000)
+        return try {
+            inetAddress.isReachable(1000)
         } catch (ignored: Exception) {
-            return false
+            false
         }
     }
 

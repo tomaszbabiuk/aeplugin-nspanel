@@ -27,16 +27,13 @@ import eu.automateeverything.domain.hardware.PortFinder
 import org.pf4j.Extension
 
 @Extension
-class TabletConfigurable(
-    private val portFinder: PortFinder,
-    private val eventBus: EventBus
-) : StateDeviceConfigurable() {
+class TabletConfigurable(private val portFinder: PortFinder, private val eventBus: EventBus) :
+    StateDeviceConfigurable() {
 
     override val parent: Class<out Configurable>
         get() = DevicesConfigurable::class.java
 
     private val portField =
-
         PortReferenceField(
             FIELD_PORT,
             R.field_port_hint,
@@ -55,24 +52,28 @@ class TabletConfigurable(
     override val states: Map<String, State>
         get() {
             val states: MutableMap<String, State> = HashMap()
-            states[STATE_UNKNOWN] = State.buildReadOnlyState(
-                STATE_UNKNOWN,
-                R.state_unknown,
-            )
-            states[STATE_ACTIVE] = State.buildReadOnlyState(
-                STATE_ACTIVE,
-                R.state_active,
-            )
-            states[STATE_INACTIVE] = State.buildReadOnlyState(
-                STATE_INACTIVE,
-                R.state_inactive,
-            )
+            states[STATE_UNKNOWN] =
+                State.buildReadOnlyState(
+                    STATE_UNKNOWN,
+                    R.state_unknown,
+                )
+            states[STATE_ACTIVE] =
+                State.buildReadOnlyState(
+                    STATE_ACTIVE,
+                    R.state_active,
+                )
+            states[STATE_INACTIVE] =
+                State.buildReadOnlyState(
+                    STATE_INACTIVE,
+                    R.state_inactive,
+                )
             return states
         }
 
     override val fieldDefinitions: Map<String, FieldDefinition<*>>
         get() {
-            val result: MutableMap<String, FieldDefinition<*>> = LinkedHashMap(super.fieldDefinitions)
+            val result: MutableMap<String, FieldDefinition<*>> =
+                LinkedHashMap(super.fieldDefinitions)
             result[FIELD_PORT] = portField
             return result
         }
@@ -83,7 +84,8 @@ class TabletConfigurable(
     override val descriptionRes = R.configurable_tablet_description
 
     override val iconRaw: String
-        get() = """
+        get() =
+            """
             <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" enable-background="new 0 0 100 100" version="1.1" xml:space="preserve">
              <g class="layer">
               <title>Layer 1</title>
@@ -93,7 +95,8 @@ class TabletConfigurable(
               <path d="m24.09,15.71c-4.74,0 -8.59,2.37 -8.59,5.3l0,45.89c0,2.92 3.85,5.3 8.59,5.3l51.52,0c4.74,0 8.59,-2.37 8.59,-5.3l0,-45.89c0,-2.92 -3.85,-5.3 -8.59,-5.3l-51.52,0zm54.39,5.3l0,45.89c0,0.97 -1.28,1.77 -2.86,1.77l-51.52,0c-1.58,0 -2.86,-0.79 -2.86,-1.77l0,-45.89c0,-0.97 1.28,-1.77 2.86,-1.77l51.52,0c1.58,0 2.86,0.8 2.86,1.77z" id="svg_4"/>
              </g>
             </svg>
-        """.trimIndent()
+        """
+                .trimIndent()
 
     companion object {
         const val FIELD_PORT = "portId"
@@ -101,4 +104,3 @@ class TabletConfigurable(
         const val STATE_INACTIVE = "inactive"
     }
 }
-

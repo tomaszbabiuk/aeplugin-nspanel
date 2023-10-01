@@ -15,15 +15,36 @@
 
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.domain.hardware.InputPort
+import eu.automateeverything.domain.events.EventBus
+import eu.automateeverything.domain.hardware.Port
+import eu.automateeverything.domain.hardware.PortCapabilities
+import java.io.IOException
+import java.util.*
 import org.eclipse.californium.core.CoapClient
 
 class TabletPort(
-    override val id: String,
-    override var lastSeenTimestamp: Long,
-    private val aeClient: AETabletClient) : InputPort<TabletConnectorPortValue>{
+    factoryId: String,
+    adapterId: String,
+    portId: String,
+    eventBus: EventBus,
+    lastSeenTimestamp: Long,
+    private val aeClient: AETabletClient
+) :
+    Port<TabletConnectorPortValue>(
+        factoryId,
+        adapterId,
+        portId,
+        eventBus,
+        TabletConnectorPortValue::class.java,
+        PortCapabilities(false, false),
+        0L
+    ) {
+
+    init {
+        updateLastSeenTimeStamp(lastSeenTimestamp)
+    }
+
     private var actionsClient: CoapClient? = null
-    override val valueClazz = TabletConnectorPortValue::class.java
     private var sceneId = "init"
     private var optionId: String? = null
 
@@ -31,11 +52,20 @@ class TabletPort(
         return TabletConnectorPortValue()
     }
 
+    override fun readInternal(): TabletConnectorPortValue {
+        throw IOException("This port cannot read")
+    }
+
     fun start() {
-        actionsClient = aeClient.observeActions {
-            sceneId = it.sceneId
-            optionId = it.optionId
-        }
+        actionsClient =
+            aeClient.observeActions {
+                println("Receiving scene action $it")
+
+                sceneId = it.sceneId
+                optionId = it.optionId
+
+                updateLastSeenTimeStamp(Calendar.getInstance().timeInMillis)
+            }
     }
 
     fun stop() {

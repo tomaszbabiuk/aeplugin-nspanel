@@ -20,7 +20,6 @@ import eu.automateeverything.data.configurables.ControlType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.StateDeviceAutomationUnitBase
 import eu.automateeverything.domain.events.EventBus
-import eu.automateeverything.domain.hardware.Port
 import java.util.*
 
 class TabletAutomationUnit(
@@ -34,21 +33,21 @@ class TabletAutomationUnit(
 
     val selectedOptionId: Int? = null
     override val usedPortsIds: Array<String>
-        get() = arrayOf(port.id)
+        get() = arrayOf(port.portId)
+
     override val recalculateOnTimeChange: Boolean
         get() = false
+
     override val recalculateOnPortUpdate: Boolean
         get() = false
 
-    override fun calculateInternal(now: Calendar) {
-    }
+    override fun calculateInternal(now: Calendar) {}
 
-    override fun applyNewState(state: String) {
-    }
+    override fun applyNewState(state: String) {}
 
     fun changeScreen(screenId: String, options: Array<String>) {
         activeScreenId = screenId
-        //TODO
-        //port.sendCommand(ChangeScreenCommand())
+        // TODO
+        // port.sendCommand(ChangeScreenCommand())
     }
 }
