@@ -37,7 +37,7 @@ class TabletConfigurable(private val portFinder: PortFinder, private val eventBu
         PortReferenceField(
             FIELD_PORT,
             R.field_port_hint,
-            PortReference(TabletConnectorPortValue::class.java, PortReferenceType.Input),
+            PortReference(TabletConnectorPortValue::class.java, PortReferenceType.Any),
             RequiredStringValidator()
         )
 

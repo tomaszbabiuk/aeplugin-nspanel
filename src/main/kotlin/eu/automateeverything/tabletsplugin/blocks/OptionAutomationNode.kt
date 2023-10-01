@@ -25,7 +25,7 @@ class OptionAutomationNode(
     private val insideNode: StatementNode?,
     private val optionId: Int?,
     private val tabletDevice: TabletAutomationUnit,
-    ) : StatementNodeBase() {
+) : StatementNodeBase() {
 
     override fun process(now: Calendar, firstLoop: Boolean) {
         if (tabletDevice.selectedOptionId == optionId) {

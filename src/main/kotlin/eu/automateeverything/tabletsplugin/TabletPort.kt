@@ -45,8 +45,11 @@ class TabletPort(
     }
 
     private var actionsClient: CoapClient? = null
-    private var sceneId = "init"
-    private var optionId: String? = null
+    var activeSceneId = "init"
+        private set
+
+    var selectedOptionId: Int? = null
+        private set
 
     override fun read(): TabletConnectorPortValue {
         return TabletConnectorPortValue()
@@ -59,10 +62,8 @@ class TabletPort(
     fun start() {
         actionsClient =
             aeClient.observeActions {
-                println("Receiving scene action $it")
-
-                sceneId = it.sceneId
-                optionId = it.optionId
+                activeSceneId = it.sceneId
+                selectedOptionId = it.optionId
 
                 updateLastSeenTimeStamp(Calendar.getInstance().timeInMillis)
             }
@@ -70,5 +71,9 @@ class TabletPort(
 
     fun stop() {
         actionsClient?.shutdown()
+    }
+
+    fun changeScreen(sceeneId: String, title: String, headline: String, options: Array<String>) {
+        aeClient.changeScene(sceeneId, title, headline, options)
     }
 }

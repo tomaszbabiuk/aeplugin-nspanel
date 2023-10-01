@@ -23,15 +23,14 @@ import java.util.*
 class ShowDialogAutomationNode(
     override val next: StatementNode?,
     private val screenId: String,
-    headline: String,
+    private val title: String,
+    private val headline: String,
     private val tabletDevice: TabletAutomationUnit,
     private val options: LinkedHashMap<String, StatementNode>,
-    ) : StatementNodeBase() {
+) : StatementNodeBase() {
 
     override fun process(now: Calendar, firstLoop: Boolean) {
-        if (tabletDevice.activeScreenId != screenId) {
-            tabletDevice.changeScreen(screenId, options.keys.toTypedArray())
-        }
+        tabletDevice.changeScene(screenId, title, headline, options.keys.toTypedArray())
 
         options.values.forEach { it.process(now, firstLoop) }
 

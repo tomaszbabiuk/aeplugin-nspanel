@@ -17,10 +17,10 @@ package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
+import eu.automateeverything.tabletsplugin.R
 import eu.automateeverything.tabletsplugin.TabletAutomationUnit
 import eu.automateeverything.tabletsplugin.TabletConfigurable
-import eu.automateeverything.tabletsplugin.R
-import java.util.LinkedHashMap
+import java.util.*
 
 class ShowDialogBlockFactory : StatementBlockFactory {
 
@@ -41,8 +41,16 @@ class ShowDialogBlockFactory : StatementBlockFactory {
                     },
                     {
                       "type": "field_input",
+                      "name": "TITLE",
+                      "text": ""
+                    },
+                    {
+                      "type": "input_dummy"
+                    },
+                    {
+                      "type": "field_input",
                       "name": "HEADLINE",
-                      "text": "Hello World!"
+                      "text": ""
                     },
                     {
                       "type": "input_dummy"
@@ -58,7 +66,8 @@ class ShowDialogBlockFactory : StatementBlockFactory {
                   "tooltip": "",
                   "helpUrl": ""
                 }
-            """.trimIndent()
+            """
+                .trimIndent()
         }
     }
 
@@ -70,32 +79,57 @@ class ShowDialogBlockFactory : StatementBlockFactory {
         order: Int
     ): StatementNode {
         if (context.thisDevice is TabletConfigurable) {
-            val evaluator = context.automationUnitsCache[context.instance.id] as TabletAutomationUnit
+            val evaluator =
+                context.automationUnitsCache[context.instance.id] as TabletAutomationUnit
 
-            var optionNodes = LinkedHashMap<String, StatementNode>()
-            var headlineField = block.fields?.firstOrNull { it.name == "HEADLINE"}
-                ?: throw MalformedBlockException(OptionBlockFactory.TYPE, "There should be a HEADLINE field inside.")
+            val optionNodes = LinkedHashMap<String, StatementNode>()
+            val headlineField =
+                block.fields?.firstOrNull { it.name == "HEADLINE" }
+                    ?: throw MalformedBlockException(
+                        OptionBlockFactory.TYPE,
+                        "There should be a HEADLINE field inside."
+                    )
             val headline = headlineField.value!!
+
+            val titleField =
+                block.fields?.firstOrNull { it.name == "TITLE" }
+                    ?: throw MalformedBlockException(
+                        OptionBlockFactory.TYPE,
+                        "There should be a TITLE field inside."
+                    )
+            val title = titleField.value!!
 
             if (block.statements != null) {
                 val iOptionStatement = block.statements!!.find { it.name == "OPTIONS" }
                 var iBlock = iOptionStatement?.block
                 if (iBlock != null) {
-                    var order = 0
+                    var optionIndex = 0
                     while (iBlock != null) {
-                        val labelField = iBlock.fields?.firstOrNull { it.name == "LABEL" }
-                            ?: throw MalformedBlockException(OptionBlockFactory.TYPE, "There should be a LABEL field inside.")
+                        val labelField =
+                            iBlock.fields?.firstOrNull { it.name == "LABEL" }
+                                ?: throw MalformedBlockException(
+                                    OptionBlockFactory.TYPE,
+                                    "There should be a LABEL field inside."
+                                )
                         val label = labelField.value!!
-                        val optionNode = transformer.transformStatement(iBlock, context, order)
+                        val optionNode =
+                            transformer.transformStatement(iBlock, context, optionIndex)
                         optionNodes[label] = optionNode
                         iBlock = iBlock.next?.block
-                        order++
+                        optionIndex++
                     }
                 }
             }
 
-            //TODO: Create a random screen id here
-            return ShowDialogAutomationNode(next, "screenId", headline, evaluator, optionNodes)
+            val randomScreenId = UUID.randomUUID().toString()
+            return ShowDialogAutomationNode(
+                next,
+                randomScreenId,
+                title,
+                headline,
+                evaluator,
+                optionNodes
+            )
         }
 
         throw MalformedBlockException(

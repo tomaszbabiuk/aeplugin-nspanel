@@ -29,9 +29,7 @@ class TabletAutomationUnit(
     states: Map<String, State>,
     private val port: TabletPort,
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {
-    var activeScreenId: String? = null
-
-    val selectedOptionId: Int? = null
+    val selectedOptionId: Int? = port.selectedOptionId
     override val usedPortsIds: Array<String>
         get() = arrayOf(port.portId)
 
@@ -45,9 +43,7 @@ class TabletAutomationUnit(
 
     override fun applyNewState(state: String) {}
 
-    fun changeScreen(screenId: String, options: Array<String>) {
-        activeScreenId = screenId
-        // TODO
-        // port.sendCommand(ChangeScreenCommand())
+    fun changeScene(screenId: String, title: String, headline: String, options: Array<String>) {
+        port.changeScreen(screenId, title, headline, options)
     }
 }
