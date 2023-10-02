@@ -15,7 +15,7 @@
 
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.data.coap.VersionManifestDto
+import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import eu.automateeverything.domain.langateway.LanGatewayResolver
 import eu.automateeverything.tabletsplugin.TabletAdapter.Companion.COAP_PORT
 import kotlinx.coroutines.*

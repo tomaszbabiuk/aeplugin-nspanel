@@ -7,12 +7,15 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinSerializationPluginVersion"
     }
 }
 
+apply plugin: 'maven-publish'
 apply plugin: "org.jetbrains.kotlin.jvm"
 apply plugin: "org.jetbrains.kotlin.kapt"
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: "org.jetbrains.kotlin.plugin.serialization"
 
 group = 'eu.automateeverything'
 version = '0.1.0'
@@ -73,4 +76,23 @@ shadowJar {
     exclude 'org/slf4j/**'
     exclude 'org/pf4j/**'
     exclude 'com/google/gson/**'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = project.group
+                artifactId = project.name
+                version = project.version
+
+                afterEvaluate {
+                    from components.java
+                }
+            }
+        }
+        repositories {
+            mavenLocal()
+        }
+    }
 }

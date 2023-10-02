@@ -1,7 +1,7 @@
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.data.coap.ActiveSceneDto
-import eu.automateeverything.data.coap.VersionManifestDto
+import eu.automateeverything.tabletsplugin.interop.ActiveSceneDto
+import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import java.io.IOException
 import java.net.InetAddress
 import kotlinx.serialization.BinaryFormat

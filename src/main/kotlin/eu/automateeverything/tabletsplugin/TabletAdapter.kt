@@ -16,7 +16,7 @@
 package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.Repository
-import eu.automateeverything.data.coap.VersionManifestDto
+import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.*
 import eu.automateeverything.domain.langateway.LanGatewayResolver
