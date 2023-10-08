@@ -61,7 +61,7 @@ class TabletPort(
 
     fun start() {
         actionsClient =
-            aeClient.observeActions {
+            aeClient.observeActiveScene {
                 activeSceneId = it.sceneId
                 selectedOptionId = it.optionId
 
