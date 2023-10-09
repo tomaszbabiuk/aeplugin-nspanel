@@ -20,14 +20,18 @@ import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.domain.automation.blocks.CommonBlockCategories
 import eu.automateeverything.domain.configurable.NameDescriptionConfigurable.Companion.FIELD_NAME
-import eu.automateeverything.domain.configurable.StateDeviceConfigurable
+import eu.automateeverything.tabletsplugin.DialogConfigurable
 import eu.automateeverything.tabletsplugin.R
+import eu.automateeverything.tabletsplugin.TabletAutomationUnit
+import java.util.*
 
 class ShowDialogBlockFactory(private val dialog: InstanceDto) : StatementBlockFactory {
 
     override val category = CommonBlockCategories.ThisObject
 
-    override val type: String = "show_dialog_${dialog.id}"
+    private val typePrefix = "show_dialog_"
+
+    override val type: String = "$typePrefix${dialog.id}"
 
     override fun buildBlock(): RawJson {
         return RawJson {
@@ -51,19 +55,49 @@ class ShowDialogBlockFactory(private val dialog: InstanceDto) : StatementBlockFa
         transformer: BlocklyTransformer,
         order: Int
     ): StatementNode {
-        //        if (context.thisDevice is StateDeviceConfigurable) {
-        //            val evaluator = context.automationUnitsCache[context.instance.id]
-        //            if (evaluator is StateDeviceAutomationUnitBase) {
-        //                return ChangeStateAutomationNode(state.id, evaluator, next)
-        //            } else {
-        //                throw MalformedBlockException(block.type, "should point only to a state
-        // device")
-        //            }
-        //        }
+        val thisAutomationUnit =
+            context.automationUnitsCache[context.thisInstance.id] as TabletAutomationUnit
 
-        throw MalformedBlockException(
-            block.type,
-            "it's impossible to connect this block with correct ${StateDeviceConfigurable::class.java}"
+        val instanceIdRaw = block.type.replace(typePrefix, "")
+        val instanceId = instanceIdRaw.toLong()
+
+        val dialogInstance =
+            context.allInstances[instanceId]
+                ?: throw MalformedBlockException(
+                    type,
+                    "Show dialog block points to a ${DialogConfigurable::class.java.simpleName} with id== $instanceId but device with this id does not exists"
+                )
+
+        val title = dialogInstance.fields[DialogConfigurable.FIELD_TITLE]!!
+        val headline = dialogInstance.fields[DialogConfigurable.FIELD_HEADLINE]!!
+        val option1 = dialogInstance.fields[DialogConfigurable.FIELD_OPTION1]!!
+        val option2 = dialogInstance.fields[DialogConfigurable.FIELD_OPTION2]
+        val option3 = dialogInstance.fields[DialogConfigurable.FIELD_OPTION3]
+        val option4 = dialogInstance.fields[DialogConfigurable.FIELD_OPTION4]
+        val option5 = dialogInstance.fields[DialogConfigurable.FIELD_OPTION5]
+        val option6 = dialogInstance.fields[DialogConfigurable.FIELD_OPTION6]
+        val option7 = dialogInstance.fields[DialogConfigurable.FIELD_OPTION7]
+
+        val options = ArrayList<String>()
+        options.add(option1)
+        option2?.apply { options.add(this) } options
+            are actually
+            empty strings
+            not nulls
+            option3?.apply { options.add(this) }
+        option4?.apply { options.add(this) }
+        option5?.apply { options.add(this) }
+        option6?.apply { options.add(this) }
+        option7?.apply { options.add(this) }
+
+        val randomScreenId = UUID.randomUUID().toString()
+        return ShowDialogAutomationNode(
+            next,
+            randomScreenId,
+            title,
+            headline,
+            thisAutomationUnit,
+            options.toTypedArray()
         )
     }
 }

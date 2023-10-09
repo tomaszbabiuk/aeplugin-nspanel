@@ -26,13 +26,11 @@ class ShowDialogAutomationNode(
     private val title: String,
     private val headline: String,
     private val tabletDevice: TabletAutomationUnit,
-    private val options: LinkedHashMap<String, StatementNode>,
+    private val options: Array<String>,
 ) : StatementNodeBase() {
 
     override fun process(now: Calendar, firstLoop: Boolean) {
-        tabletDevice.changeScene(screenId, title, headline, options.keys.toTypedArray())
-
-        options.values.forEach { it.process(now, firstLoop) }
+        tabletDevice.changeScene(screenId, title, headline, options)
 
         next?.process(now, firstLoop)
     }
