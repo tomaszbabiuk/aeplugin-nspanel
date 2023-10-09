@@ -18,37 +18,41 @@ package eu.automateeverything.tabletsplugin
 import eu.automateeverything.data.localization.Resource
 
 object R {
+    val field_title_hint = Resource("Title", "Tytuł")
+    val field_headline_hint = Resource("Headline", "Treść")
+    val field_option1_hint = Resource("Option 1", "Opcja 1")
+    val field_option2_hint = Resource("Option 2", "Opcja 2")
+    val field_option3_hint = Resource("Option 3", "Opcja 3")
+    val field_option4_hint = Resource("Option 4", "Opcja 4")
+    val field_option5_hint = Resource("Option 5", "Opcja 5")
+    val field_option6_hint = Resource("Option 6", "Opcja 6")
+    val field_option7_hint = Resource("Option 7", "Opcja 7")
     val state_active = Resource("Active", "Aktywny")
-
     val state_inactive = Resource("Inactive", "Nieaktywny")
-
     val configurable_tablet_add = Resource("Add tablet", "Dodaj tablet")
-
     val configurable_tablet_edit = Resource("Edit tablet", "Edytuj tablet")
-
     val configurable_tablet_title = Resource("Tablets", "Tablety")
-
     val configurable_tablet_description =
         Resource("A custom control over Android tablet.", "Kontroler dla tabletów z Androidem.")
-
+    val configurable_dialog_add = Resource("Add dialog", "Dodaj dialog")
+    val configurable_dialog_edit = Resource("Edit dialog", "Edytuj dialog")
+    val configurable_dialog_title = Resource("Dialogs", "Dialogi")
+    val configurable_dialog_description =
+        Resource(
+            "A dialog than can be displayed on Android tablet.",
+            "Dialog wyświetlany na tabletach z androidem"
+        )
     val field_port_hint = Resource("Port", "Port")
-
     val state_unknown = Resource("Unknown", "Nieznany")
-
     val plugin_name = Resource("Tablets", "Tablety")
-
     val plugin_description =
         Resource(
             "A support for wall tablets running Android OS",
             "Wsparcie dla tabletów ściennych pracujących pod kontrolą systemu Android"
         )
-
     val n_a = Resource("n/a", "nd.")
-
     val category_tablets = Resource("Tablets", "Tablety")
-
     val block_tablets_option_message = Resource("%1 Option: %2 %3", "%1 Opcja: %2 %3")
-
     val block_tablets_show_dialog_message =
         Resource(
             "Show dialog %1 Title %2 %3 Headline %4 %5 Options %6",
