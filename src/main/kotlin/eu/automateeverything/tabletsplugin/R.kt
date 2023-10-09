@@ -52,10 +52,8 @@ object R {
         )
     val n_a = Resource("n/a", "nd.")
     val category_tablets = Resource("Tablets", "Tablety")
-    val block_tablets_option_message = Resource("%1 Option: %2 %3", "%1 Opcja: %2 %3")
-    val block_tablets_show_dialog_message =
-        Resource(
-            "Show dialog %1 Title %2 %3 Headline %4 %5 Options %6",
-            "Pokaż dialog %1 Tytuł %2 %3 Treść %4 %5 Opcje %6"
-        )
+    val block_dialog_options_message = Resource("%1 Option %2", "%1 Opcja %2")
+
+    fun block_show_dialog_message(dialogName: String) =
+        Resource("Show $dialogName", "Pokaż $dialogName")
 }

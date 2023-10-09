@@ -15,21 +15,25 @@
 
 package eu.automateeverything.tabletsplugin.blocks
 
+import eu.automateeverything.data.Repository
 import eu.automateeverything.domain.automation.BlockFactory
 import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
 import eu.automateeverything.domain.configurable.Configurable
+import eu.automateeverything.tabletsplugin.DialogConfigurable
 import org.pf4j.Extension
 
 @Suppress("unused")
 @Extension
-class TabletsBlocksCollector : BlockFactoriesCollector {
+class TabletsBlocksCollector(private val repository: Repository) : BlockFactoriesCollector {
 
     override fun collect(thisDevice: Configurable?): List<BlockFactory<*>> {
-        return collectStaticBlocks()
+        return collectShowDialogFactories() + listOf(DialogOptionsBlockFactory())
     }
 
-    private fun collectStaticBlocks() = listOf(
-        OptionBlockFactory(),
-        ShowDialogBlockFactory()
-    )
+    private fun collectShowDialogFactories(): List<ShowDialogBlockFactory> {
+        return repository
+            .getAllInstances()
+            .filter { it.clazz == DialogConfigurable::class.java.name }
+            .map { ShowDialogBlockFactory(it) }
+    }
 }

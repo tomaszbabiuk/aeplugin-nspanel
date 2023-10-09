@@ -16,57 +16,30 @@
 package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.blocks.RawJson
+import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.*
+import eu.automateeverything.domain.automation.blocks.CommonBlockCategories
+import eu.automateeverything.domain.configurable.NameDescriptionConfigurable.Companion.FIELD_NAME
+import eu.automateeverything.domain.configurable.StateDeviceConfigurable
 import eu.automateeverything.tabletsplugin.R
-import eu.automateeverything.tabletsplugin.TabletAutomationUnit
-import eu.automateeverything.tabletsplugin.TabletConfigurable
-import java.util.*
 
-class ShowDialogBlockFactory : StatementBlockFactory {
+class ShowDialogBlockFactory(private val dialog: InstanceDto) : StatementBlockFactory {
 
-    override val category = TabletsBlockCategories.Tablets
+    override val category = CommonBlockCategories.ThisObject
 
-    override val type: String = "tablet_show_dialog"
+    override val type: String = "show_dialog_${dialog.id}"
 
     override fun buildBlock(): RawJson {
-        return RawJson { language ->
+        return RawJson {
             """
-                {
-                  "type": "$type",
-                  "message0": "${R.block_tablets_show_dialog_message.getValue(language)}",
-                  "args0": [
-                    {
-                      "type": "input_dummy",
-                      "align": "CENTRE"
-                    },
-                    {
-                      "type": "field_input",
-                      "name": "TITLE",
-                      "text": ""
-                    },
-                    {
-                      "type": "input_dummy"
-                    },
-                    {
-                      "type": "field_input",
-                      "name": "HEADLINE",
-                      "text": ""
-                    },
-                    {
-                      "type": "input_dummy"
-                    },
-                    {
-                      "type": "input_statement",
-                      "name": "OPTIONS",
-                      "check": "${OptionBlockFactory.TYPE}"
-                    }
-                  ],
-                  "previousStatement": null,
-                  "colour": ${category.color},
-                  "tooltip": "",
-                  "helpUrl": ""
-                }
-            """
+                   { "type":  "$type",
+                     "colour": ${category.color},
+                     "tooltip": null,
+                     "helpUrl": null,
+                     "message0": "${R.block_show_dialog_message(dialog.fields[FIELD_NAME]!!).getValue(it)}",
+                     "previousStatement": null,
+                     "nextStatement": null }
+                """
                 .trimIndent()
         }
     }
@@ -78,63 +51,19 @@ class ShowDialogBlockFactory : StatementBlockFactory {
         transformer: BlocklyTransformer,
         order: Int
     ): StatementNode {
-        if (context.thisDevice is TabletConfigurable) {
-            val evaluator =
-                context.automationUnitsCache[context.instance.id] as TabletAutomationUnit
-
-            val optionNodes = LinkedHashMap<String, StatementNode>()
-            val headlineField =
-                block.fields?.firstOrNull { it.name == "HEADLINE" }
-                    ?: throw MalformedBlockException(
-                        OptionBlockFactory.TYPE,
-                        "There should be a HEADLINE field inside."
-                    )
-            val headline = headlineField.value!!
-
-            val titleField =
-                block.fields?.firstOrNull { it.name == "TITLE" }
-                    ?: throw MalformedBlockException(
-                        OptionBlockFactory.TYPE,
-                        "There should be a TITLE field inside."
-                    )
-            val title = titleField.value!!
-
-            if (block.statements != null) {
-                val iOptionStatement = block.statements!!.find { it.name == "OPTIONS" }
-                var iBlock = iOptionStatement?.block
-                if (iBlock != null) {
-                    var optionIndex = 0
-                    while (iBlock != null) {
-                        val labelField =
-                            iBlock.fields?.firstOrNull { it.name == "LABEL" }
-                                ?: throw MalformedBlockException(
-                                    OptionBlockFactory.TYPE,
-                                    "There should be a LABEL field inside."
-                                )
-                        val label = labelField.value!!
-                        val optionNode =
-                            transformer.transformStatement(iBlock, context, optionIndex)
-                        optionNodes[label] = optionNode
-                        iBlock = iBlock.next?.block
-                        optionIndex++
-                    }
-                }
-            }
-
-            val randomScreenId = UUID.randomUUID().toString()
-            return ShowDialogAutomationNode(
-                next,
-                randomScreenId,
-                title,
-                headline,
-                evaluator,
-                optionNodes
-            )
-        }
+        //        if (context.thisDevice is StateDeviceConfigurable) {
+        //            val evaluator = context.automationUnitsCache[context.instance.id]
+        //            if (evaluator is StateDeviceAutomationUnitBase) {
+        //                return ChangeStateAutomationNode(state.id, evaluator, next)
+        //            } else {
+        //                throw MalformedBlockException(block.type, "should point only to a state
+        // device")
+        //            }
+        //        }
 
         throw MalformedBlockException(
             block.type,
-            "it's impossible to connect this block with correct ${TabletConfigurable::class.java}"
+            "it's impossible to connect this block with correct ${StateDeviceConfigurable::class.java}"
         )
     }
 }

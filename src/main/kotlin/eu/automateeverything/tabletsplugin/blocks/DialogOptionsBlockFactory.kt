@@ -17,6 +17,7 @@ package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
+import eu.automateeverything.tabletsplugin.R
 
 open class DialogOptionsBlockFactory : EvaluatorBlockFactory {
 
@@ -38,7 +39,7 @@ open class DialogOptionsBlockFactory : EvaluatorBlockFactory {
             """
                 {
                   "type": "$type",
-                  "message0": "%1 option %2",
+                  "message0": "${R.block_dialog_options_message.getValue(language)}",
                   "args0": [
                     {
                       "type": "input_dummy",
