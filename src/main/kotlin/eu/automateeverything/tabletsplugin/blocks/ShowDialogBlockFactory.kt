@@ -36,7 +36,7 @@ class ShowDialogBlockFactory(private val dialog: InstanceDto) : StatementBlockFa
                      "colour": ${category.color},
                      "tooltip": null,
                      "helpUrl": null,
-                     "message0": "${R.block_show_dialog_message(dialog.fields[FIELD_NAME]!!).getValue(it)}",
+                     "message0": "${R.block_show_dialog_message(dialog.fields[FIELD_NAME]!!).getValue(it )}",
                      "previousStatement": null,
                      "nextStatement": null }
                 """

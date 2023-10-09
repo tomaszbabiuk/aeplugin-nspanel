@@ -55,5 +55,5 @@ object R {
     val block_dialog_options_message = Resource("%1 Option %2", "%1 Opcja %2")
 
     fun block_show_dialog_message(dialogName: String) =
-        Resource("Show $dialogName", "Pokaż $dialogName")
+        Resource("Show \\\"$dialogName\\\"", "Pokaż \\\"$dialogName\\\"")
 }
