@@ -52,8 +52,13 @@ object R {
         )
     val n_a = Resource("n/a", "nd.")
     val category_tablets = Resource("Tablets", "Tablety")
-    val block_dialog_options_message = Resource("%1 Option %2", "%1 Opcja %2")
 
     fun block_show_dialog_message(dialogName: String) =
         Resource("Show \\\"$dialogName\\\"", "Pokaż \\\"$dialogName\\\"")
+
+    fun block_dialog_option_selected(dialogName: String) =
+        Resource(
+            "\\\"$dialogName\\\" %1 - option %2 selected",
+            "\\\"$dialogName\\\" %1 - opcja %2 została wybrana"
+        )
 }

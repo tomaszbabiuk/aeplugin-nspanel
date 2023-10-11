@@ -40,7 +40,7 @@ class ShowDialogBlockFactory(private val dialog: InstanceDto) : StatementBlockFa
                      "colour": ${category.color},
                      "tooltip": null,
                      "helpUrl": null,
-                     "message0": "${R.block_show_dialog_message(dialog.fields[FIELD_NAME]!!).getValue(it )}",
+                     "message0": "${R.block_show_dialog_message(dialog.fields[FIELD_NAME]!!).getValue(it)}",
                      "previousStatement": null,
                      "nextStatement": null }
                 """
@@ -58,14 +58,14 @@ class ShowDialogBlockFactory(private val dialog: InstanceDto) : StatementBlockFa
         val thisAutomationUnit =
             context.automationUnitsCache[context.thisInstance.id] as TabletAutomationUnit
 
-        val instanceIdRaw = block.type.replace(typePrefix, "")
-        val instanceId = instanceIdRaw.toLong()
+        val dialogInstanceIdRaw = block.type.replace(typePrefix, "")
+        val dialogInstanceId = dialogInstanceIdRaw.toLong()
 
         val dialogInstance =
-            context.allInstances[instanceId]
+            context.allInstances[dialogInstanceId]
                 ?: throw MalformedBlockException(
                     type,
-                    "Show dialog block points to a ${DialogConfigurable::class.java.simpleName} with id== $instanceId but device with this id does not exists"
+                    "Show dialog block points to a ${DialogConfigurable::class.java.simpleName} with id== $dialogInstanceId but device with this id does not exists"
                 )
 
         val title = dialogInstance.fields[DialogConfigurable.FIELD_TITLE]!!
@@ -79,21 +79,23 @@ class ShowDialogBlockFactory(private val dialog: InstanceDto) : StatementBlockFa
         val option7 = dialogInstance.fields[DialogConfigurable.FIELD_OPTION7]
 
         val options = ArrayList<String>()
-        options.add(option1)
-        option2?.apply { options.add(this) } options
-            are actually
-            empty strings
-            not nulls
-            option3?.apply { options.add(this) }
-        option4?.apply { options.add(this) }
-        option5?.apply { options.add(this) }
-        option6?.apply { options.add(this) }
-        option7?.apply { options.add(this) }
+        fun addOption(item: String?) {
+            if (item != null && item != "") {
+                options.add(item)
+            }
+        }
 
-        val randomScreenId = UUID.randomUUID().toString()
+        addOption(option1)
+        addOption(option2)
+        addOption(option3)
+        addOption(option4)
+        addOption(option5)
+        addOption(option6)
+        addOption(option7)
+
         return ShowDialogAutomationNode(
             next,
-            randomScreenId,
+            dialogInstanceId.toString(),
             title,
             headline,
             thisAutomationUnit,

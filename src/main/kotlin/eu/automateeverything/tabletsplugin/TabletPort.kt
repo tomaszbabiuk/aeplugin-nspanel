@@ -65,6 +65,7 @@ class TabletPort(
                 activeSceneId = it.sceneId
                 selectedOptionId = it.optionId
 
+                notifyValueUpdate()
                 updateLastSeenTimeStamp(Calendar.getInstance().timeInMillis)
             }
     }

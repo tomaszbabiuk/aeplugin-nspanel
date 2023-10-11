@@ -27,7 +27,7 @@ import org.pf4j.Extension
 class TabletsBlocksCollector(private val repository: Repository) : BlockFactoriesCollector {
 
     override fun collect(thisDevice: Configurable?): List<BlockFactory<*>> {
-        return collectShowDialogFactories() + listOf(DialogOptionsBlockFactory())
+        return collectShowDialogFactories() + collectOptionSelectedTriggerFactories()
     }
 
     private fun collectShowDialogFactories(): List<ShowDialogBlockFactory> {
@@ -35,5 +35,12 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
             .getAllInstances()
             .filter { it.clazz == DialogConfigurable::class.java.name }
             .map { ShowDialogBlockFactory(it) }
+    }
+
+    private fun collectOptionSelectedTriggerFactories(): List<OptionSelectedTriggerBlockFactory> {
+        return repository
+            .getAllInstances()
+            .filter { it.clazz == DialogConfigurable::class.java.name }
+            .map { OptionSelectedTriggerBlockFactory(it) }
     }
 }
