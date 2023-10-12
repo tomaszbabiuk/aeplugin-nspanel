@@ -5,8 +5,8 @@ import eu.automateeverything.tabletsplugin.interop.DialogDto
 import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import java.io.IOException
 import java.net.InetAddress
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.serialization.BinaryFormat
-import kotlinx.serialization.encodeToByteArray
 import org.eclipse.californium.core.CoapClient
 import org.eclipse.californium.core.CoapHandler
 import org.eclipse.californium.core.CoapResponse
@@ -18,6 +18,10 @@ class AETabletClient(
     private val port: Int,
     private val binaryFormat: BinaryFormat
 ) {
+    private val observeResponseInProgress = AtomicBoolean(false)
+
+    private val putQueue = ArrayList<Triple<String, ByteArray, Boolean>>()
+
     private fun get(endpoint: String, ignoreIOErrors: Boolean = false): CoapResponse? {
         val uri = "coap:/$address:$port$endpoint"
         val client = CoapClient(uri)
@@ -36,19 +40,28 @@ class AETabletClient(
         return null
     }
 
-    private fun put(endpoint: String, payload: ByteArray, ignoreIOErrors: Boolean = false): CoapResponse? {
-        val uri = "coap:/$address:$port$endpoint"
-        val client = CoapClient(uri)
-        client.timeout = 5000
+    private fun put(
+        endpoint: String,
+        payload: ByteArray,
+        ignoreIOErrors: Boolean = false
+    ): CoapResponse? {
+        if (observeResponseInProgress.get()) {
+            putQueue.add(Triple(endpoint, payload, ignoreIOErrors))
+        } else {
 
-        try {
-            return client.put(payload, APPLICATION_CBOR)
-        } catch (ex: Exception) {
-            if (!ignoreIOErrors) {
-                throw IOException(ex)
+            val uri = "coap:/$address:$port$endpoint"
+            val client = CoapClient(uri)
+            client.timeout = 5000
+
+            try {
+                return client.put(payload, APPLICATION_CBOR)
+            } catch (ex: Exception) {
+                if (!ignoreIOErrors) {
+                    throw IOException(ex)
+                }
+            } finally {
+                client.shutdown()
             }
-        } finally {
-            client.shutdown()
         }
 
         return null
@@ -66,7 +79,9 @@ class AETabletClient(
             client.observe(
                 object : CoapHandler {
                     override fun onLoad(response: CoapResponse) {
+                        observeResponseInProgress.set(true)
                         responseHandler(response)
+                        observeResponseInProgress.set(false)
                     }
 
                     override fun onError() {
@@ -79,6 +94,13 @@ class AETabletClient(
         }
 
         return client
+    }
+
+    public fun releasePutQueue() {
+        while (putQueue.size > 0) {
+            val firstToPut = putQueue.removeFirst()
+            put(firstToPut.first, firstToPut.second)
+        }
     }
 
     fun observeActiveScene(handler: (ActiveSceneDto) -> Unit): CoapClient {
@@ -116,6 +138,6 @@ class AETabletClient(
         val dialog = DialogDto(title, headline, options)
         val activeSceneDto = ActiveSceneDto(sceneId, dialog = dialog)
         val payload = binaryFormat.encodeToByteArray(ActiveSceneDto.serializer(), activeSceneDto)
-        put("/activescene", payload)
+        val response = put("/activescene", payload)
     }
 }

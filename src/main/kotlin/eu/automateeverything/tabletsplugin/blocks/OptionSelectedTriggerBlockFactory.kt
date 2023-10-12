@@ -77,10 +77,23 @@ class OptionSelectedTriggerBlockFactory(
         val dialogInstanceIdRaw = block.type.replace(typePrefix, "")
         val dialogInstanceId = dialogInstanceIdRaw.toLong()
 
-        return DialogOptionAutomationNode(context, dialogInstanceId.toString(), 1, next)
+        if (block.fields == null) {
+            throw MalformedBlockException(block.type, "should have <field> defined")
+        }
+
+        val optionField =
+            block.fields!!.find { it.name == "OPTION_ID" }
+                ?: throw MalformedBlockException(
+                    block.type,
+                    "should have <field name=\"OPTION_ID\"> defined"
+                )
+
+        val optionId = optionField.value!!.toInt()
+
+        return DialogOptionAutomationNode(context, dialogInstanceId.toString(), optionId, next)
     }
 
     override fun dependsOn(): List<Long> {
-        return listOf()
+        return listOf(dialog.id)
     }
 }

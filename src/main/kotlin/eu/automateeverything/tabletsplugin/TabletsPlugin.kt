@@ -21,7 +21,6 @@ import eu.automateeverything.data.plugins.PluginCategory
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.extensibility.PluginMetadata
 import eu.automateeverything.domain.hardware.HardwareAdapter
-import eu.automateeverything.domain.hardware.HardwareManager
 import eu.automateeverything.domain.hardware.HardwarePlugin
 import eu.automateeverything.domain.hardware.PortFinder
 import eu.automateeverything.domain.langateway.LanGatewayResolver
@@ -36,15 +35,13 @@ class TabletsPlugin(
     private val repository: Repository
 ) : HardwarePlugin(wrapper), PluginMetadata {
     override fun createAdapters(): List<HardwareAdapter<*>> {
-        val adapter = TabletAdapter(pluginId, lanGatewayResolver, portFinder, repository, eventBus)
+        val adapter = TabletAdapter(pluginId, lanGatewayResolver, eventBus)
         return listOf(adapter)
     }
 
-    override fun start() {
-    }
+    override fun start() {}
 
-    override fun stop() {
-    }
+    override fun stop() {}
 
     override val name: Resource = R.plugin_name
     override val description: Resource = R.plugin_description

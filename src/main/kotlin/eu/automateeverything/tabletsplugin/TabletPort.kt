@@ -77,4 +77,8 @@ class TabletPort(
     fun changeScreen(sceeneId: String, title: String, headline: String, options: Array<String>) {
         aeClient.changeScene(sceeneId, title, headline, options)
     }
+
+    fun releaseWaitingQueue() {
+        aeClient.releasePutQueue()
+    }
 }

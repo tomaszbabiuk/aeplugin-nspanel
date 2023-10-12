@@ -15,28 +15,21 @@
 
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.data.Repository
-import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.*
 import eu.automateeverything.domain.langateway.LanGatewayResolver
+import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import java.net.InetAddress
 import java.util.Calendar
 import kotlinx.coroutines.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.cbor.Cbor
-import org.eclipse.californium.core.CoapClient
 
-@OptIn(ExperimentalSerializationApi::class)
 class TabletAdapter(
     owningPluginId: String,
-    private val lanGatewayResolver: LanGatewayResolver,
-    private val portFinder: PortFinder,
-    private val repository: Repository,
+    lanGatewayResolver: LanGatewayResolver,
     eventBus: EventBus
 ) : HardwareAdapterBase<TabletPort>(owningPluginId, "0", eventBus) {
 
-    private var actionClients: List<CoapClient>? = null
     private val binaryFormat = Cbor
 
     private val coapDiscovery = CoAPDiscovery(binaryFormat, lanGatewayResolver) { logDiscovery(it) }
@@ -71,7 +64,19 @@ class TabletAdapter(
         ports.values.forEach { it.stop() }
     }
 
-    override fun start() {}
+    override fun start() {
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            while (isActive) {
+                delay(1000)
+                try {
+                    ports.values.forEach { it.releaseWaitingQueue() }
+                } catch (ex: Exception) {
+                    println(ex)
+                }
+            }
+        }
+    }
 
     companion object {
         const val COAP_PORT = 5683

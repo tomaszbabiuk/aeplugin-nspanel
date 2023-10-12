@@ -102,4 +102,8 @@ class ShowDialogBlockFactory(private val dialog: InstanceDto) : StatementBlockFa
             options.toTypedArray()
         )
     }
+
+    override fun dependsOn(): List<Long> {
+        return listOf(dialog.id)
+    }
 }
