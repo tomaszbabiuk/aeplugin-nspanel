@@ -22,8 +22,10 @@ import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import java.net.InetAddress
 import java.util.Calendar
 import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.cbor.Cbor
 
+@OptIn(ExperimentalSerializationApi::class)
 class TabletAdapter(
     owningPluginId: String,
     lanGatewayResolver: LanGatewayResolver,
@@ -53,7 +55,15 @@ class TabletAdapter(
     ): TabletPort {
         val portId = idBuilder.buildPortId("TAB", manifest.uniqueId, "DATA")
         val aeClient = AETabletClient(address, COAP_PORT, binaryFormat)
-        val port = TabletPort(owningPluginId, adapterId, portId, eventBus, now, aeClient)
+        val port =
+            TabletPort(
+                owningPluginId,
+                adapterId,
+                portId,
+                eventBus,
+                now,
+                aeClient,
+            )
         port.start()
         return port
     }
@@ -64,19 +74,7 @@ class TabletAdapter(
         ports.values.forEach { it.stop() }
     }
 
-    override fun start() {
-        val scope = CoroutineScope(Dispatchers.IO)
-        scope.launch {
-            while (isActive) {
-                delay(1000)
-                try {
-                    ports.values.forEach { it.releaseWaitingQueue() }
-                } catch (ex: Exception) {
-                    println(ex)
-                }
-            }
-        }
-    }
+    override fun start() {}
 
     companion object {
         const val COAP_PORT = 5683

@@ -31,7 +31,13 @@ object R {
     val state_inactive = Resource("Inactive", "Nieaktywny")
     val configurable_tablet_add = Resource("Add tablet", "Dodaj tablet")
     val configurable_tablet_edit = Resource("Edit tablet", "Edytuj tablet")
-    val configurable_tablet_title = Resource("Tablets", "Tablety")
+    val configurable_tablets_title = Resource("Tablets", "Tablety")
+    val configurable_tablets_description =
+        Resource(
+            "Objects related to tablets and content on those tablets.",
+            "Obiekty związane z tabletami i treścią na tych tabletach."
+        )
+    val configurable_tablet_title = Resource("Tablets (Android)", "Tablety (Android)")
     val configurable_tablet_description =
         Resource("A custom control over Android tablet.", "Kontroler dla tabletów z Androidem.")
     val configurable_dialog_add = Resource("Add dialog", "Dodaj dialog")

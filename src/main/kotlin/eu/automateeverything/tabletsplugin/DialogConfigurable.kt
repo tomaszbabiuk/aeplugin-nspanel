@@ -16,7 +16,6 @@
 package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.Repository
-import eu.automateeverything.devices.DevicesConfigurable
 import eu.automateeverything.domain.configurable.*
 import org.pf4j.Extension
 
@@ -24,7 +23,7 @@ import org.pf4j.Extension
 open class DialogConfigurable(private val repository: Repository) : NameDescriptionConfigurable() {
 
     override val parent: Class<out Configurable>
-        get() = DevicesConfigurable::class.java
+        get() = TabletsConfigurable::class.java
 
     private val titleField =
         StringField(
@@ -106,13 +105,11 @@ open class DialogConfigurable(private val repository: Repository) : NameDescript
     override val iconRaw: String
         get() =
             """
-            <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" enable-background="new 0 0 100 100" version="1.1" xml:space="preserve">
+            <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+             <title>dialog_1</title>
              <g class="layer">
               <title>Layer 1</title>
-              <path d="m16.62,7.83c-6.14,0 -11.12,3.55 -11.12,7.91l0,68.52c0,4.36 4.99,7.91 11.12,7.91l66.75,0c6.14,0 11.12,-3.55 11.12,-7.91l0,-68.52c0,-4.36 -4.99,-7.91 -11.12,-7.91l-66.75,0zm70.46,7.91l0,68.52c0,1.45 -1.66,2.64 -3.71,2.64l-66.75,0c-2.05,0 -3.71,-1.18 -3.71,-2.64l0,-68.52c0,-1.45 1.66,-2.64 3.71,-2.64l66.75,0c2.05,0 3.71,1.19 3.71,2.64z" id="svg_1"/>
-              <path d="m79.74,73.93l-21.62,0c-2.98,0 -5.41,2.51 -5.41,5.61s2.42,5.61 5.41,5.61l21.62,0c2.98,0 5.41,-2.51 5.41,-5.61s-2.42,-5.61 -5.41,-5.61z" id="svg_2"/>
-              <path d="m42.48,74.24l-21.62,0c-2.98,0 -5.41,2.51 -5.41,5.61s2.42,5.61 5.41,5.61l21.62,0c2.98,0 5.41,-2.51 5.41,-5.61s-2.42,-5.61 -5.41,-5.61z" id="svg_3" transform="matrix(1 0 0 1 0 0)"/>
-              <path d="m24.09,15.71c-4.74,0 -8.59,2.37 -8.59,5.3l0,45.89c0,2.92 3.85,5.3 8.59,5.3l51.52,0c4.74,0 8.59,-2.37 8.59,-5.3l0,-45.89c0,-2.92 -3.85,-5.3 -8.59,-5.3l-51.52,0zm54.39,5.3l0,45.89c0,0.97 -1.28,1.77 -2.86,1.77l-51.52,0c-1.58,0 -2.86,-0.79 -2.86,-1.77l0,-45.89c0,-0.97 1.28,-1.77 2.86,-1.77l51.52,0c1.58,0 2.86,0.8 2.86,1.77z" id="svg_4"/>
+              <path d="m89.7695,86.35039l0,0.5367l-0.16101,0.26835a4.91081,4.91081 0 0 1 -0.48303,0.91239a3.48855,3.48855 0 0 1 -0.26835,0.40253a3.94475,3.94475 0 0 1 -2.97869,1.36859l0,0a6.09155,6.09155 0 0 1 -2.20047,-0.21468l-25.62744,-7.11128a5.07182,5.07182 0 0 1 -1.26125,-0.64404l-2.79084,0l0,-0.29519a33.4096,33.4096 0 0 1 -3.99842,0.29519c-22.00471,0 -39.85,-16.10101 -39.85,-35.87842s17.84529,-35.85158 39.85,-35.85158s39.85,16.10101 39.85,35.85158l0,39.87684a3.03236,3.03236 0 0 1 -0.08051,0.48303zm-7.8895,-32.36303l0,-8.05051c0,-15.4033 -14.27623,-27.88158 -31.88,-27.88158s-31.88,12.53195 -31.88,27.93525s14.27623,27.90842 31.88,27.90842l8.05051,0l0,0a6.22572,6.22572 0 0 1 2.22731,0.18785l21.68269,6.03788l-0.08051,-26.13731zm-47.82,0a3.97158,3.97158 0 0 1 3.97158,-3.99842l23.93684,0a3.99842,3.99842 0 0 1 0,8.05051l-23.93684,0a3.97158,3.97158 0 0 1 -3.97158,-3.97158l0,-0.08051zm27.90842,-12.04892l-23.93684,0a3.99842,3.99842 0 0 1 0,-8.05051l23.93684,0a3.99842,3.99842 0 0 1 0,8.05051z" fill="black" id="svg_1"/>
              </g>
             </svg>
         """

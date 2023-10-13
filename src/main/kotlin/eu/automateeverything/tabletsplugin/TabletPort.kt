@@ -20,6 +20,7 @@ import eu.automateeverything.domain.hardware.Port
 import eu.automateeverything.domain.hardware.PortCapabilities
 import java.io.IOException
 import java.util.*
+import kotlinx.coroutines.*
 import org.eclipse.californium.core.CoapClient
 
 class TabletPort(
@@ -28,7 +29,8 @@ class TabletPort(
     portId: String,
     eventBus: EventBus,
     lastSeenTimestamp: Long,
-    private val aeClient: AETabletClient
+    private val aeClient: AETabletClient,
+    private var operationScope: CoroutineScope? = null
 ) :
     Port<TabletConnectorPortValue>(
         factoryId,
@@ -60,6 +62,8 @@ class TabletPort(
     }
 
     fun start() {
+        operationScope = CoroutineScope(Dispatchers.IO)
+
         actionsClient =
             aeClient.observeActiveScene {
                 activeSceneId = it.sceneId
@@ -68,17 +72,25 @@ class TabletPort(
                 notifyValueUpdate()
                 updateLastSeenTimeStamp(Calendar.getInstance().timeInMillis)
             }
+
+        operationScope?.launch {
+            while (isActive) {
+                delay(500)
+                try {
+                    aeClient.releasePutQueue()
+                } catch (ex: Exception) {
+                    println(ex)
+                }
+            }
+        }
     }
 
     fun stop() {
         actionsClient?.shutdown()
+        operationScope?.cancel()
     }
 
-    fun changeScreen(sceeneId: String, title: String, headline: String, options: Array<String>) {
-        aeClient.changeScene(sceeneId, title, headline, options)
-    }
-
-    fun releaseWaitingQueue() {
-        aeClient.releasePutQueue()
+    fun changeScreen(sceneId: String, title: String, headline: String, options: Array<String>) {
+        aeClient.changeScene(sceneId, title, headline, options)
     }
 }

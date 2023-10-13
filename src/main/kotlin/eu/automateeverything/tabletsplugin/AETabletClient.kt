@@ -16,7 +16,7 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry.APPLICATION_CBOR
 class AETabletClient(
     private val address: InetAddress,
     private val port: Int,
-    private val binaryFormat: BinaryFormat
+    private val binaryFormat: BinaryFormat,
 ) {
     private val observeResponseInProgress = AtomicBoolean(false)
 
@@ -138,6 +138,6 @@ class AETabletClient(
         val dialog = DialogDto(title, headline, options)
         val activeSceneDto = ActiveSceneDto(sceneId, dialog = dialog)
         val payload = binaryFormat.encodeToByteArray(ActiveSceneDto.serializer(), activeSceneDto)
-        val response = put("/activescene", payload)
+        put("/activescene", payload)
     }
 }
