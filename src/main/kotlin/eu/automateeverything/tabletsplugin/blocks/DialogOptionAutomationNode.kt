@@ -25,8 +25,8 @@ import java.util.*
 
 class DialogOptionAutomationNode(
     context: AutomationContext,
-    val sceneId: String,
-    val optionId: Int,
+    private val sceneId: String,
+    private val optionId: Int,
     override val next: StatementNode?
 ) : StatementNodeBase(), StateChangedListener {
 

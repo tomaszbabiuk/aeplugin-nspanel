@@ -116,7 +116,7 @@ open class DialogConfigurable(private val repository: Repository) : NameDescript
                 .trimIndent()
 
     override val hasAutomation: Boolean
-        get() = false
+        get() = true
 
     override val editableIcon: Boolean
         get() = false

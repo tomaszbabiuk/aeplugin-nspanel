@@ -26,8 +26,16 @@ import org.pf4j.Extension
 @Extension
 class TabletsBlocksCollector(private val repository: Repository) : BlockFactoriesCollector {
 
-    override fun collect(thisDevice: Configurable?): List<BlockFactory<*>> {
-        return collectShowDialogFactories() + collectOptionSelectedTriggerFactories()
+    override fun collect(thisDevice: Configurable): List<BlockFactory<*>> {
+        return collectThisDeviceBlocks(thisDevice)
+    }
+
+    private fun collectThisDeviceBlocks(thisDevice: Configurable): List<BlockFactory<*>> {
+        if (thisDevice is DialogConfigurable) {
+            return listOf(ScreenCompositionBlockFactory())
+        }
+
+        return listOf()
     }
 
     private fun collectShowDialogFactories(): List<ShowDialogBlockFactory> {

@@ -67,4 +67,7 @@ object R {
             "\\\"$dialogName\\\" %1 - option %2 selected",
             "\\\"$dialogName\\\" %1 - opcja %2 została wybrana"
         )
+
+    val block_screen_composition_message =
+        Resource("Show screen composition on %1 %2", "Pokaż kompozycję ekranu na %1 %2")
 }
