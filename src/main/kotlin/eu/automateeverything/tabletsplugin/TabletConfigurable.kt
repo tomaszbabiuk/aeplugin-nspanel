@@ -16,6 +16,8 @@
 package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.automation.State
+import eu.automateeverything.data.fields.InstanceReference
+import eu.automateeverything.data.fields.InstanceReferenceType
 import eu.automateeverything.data.fields.PortReference
 import eu.automateeverything.data.fields.PortReferenceType
 import eu.automateeverything.data.instances.InstanceDto
@@ -37,6 +39,14 @@ class TabletConfigurable(private val portFinder: PortFinder, private val eventBu
             FIELD_PORT,
             R.field_port_hint,
             PortReference(TabletConnectorPortValue::class.java, PortReferenceType.Any),
+            RequiredStringValidator()
+        )
+
+    private val initialCompositionIdField =
+        InstanceReferenceField(
+            FIELD_INITIAL_COMPOSITION,
+            R.field_initial_composition,
+            InstanceReference(CompositionConfigurable::class.java, InstanceReferenceType.Single),
             RequiredStringValidator()
         )
 
@@ -74,6 +84,7 @@ class TabletConfigurable(private val portFinder: PortFinder, private val eventBu
             val result: MutableMap<String, FieldDefinition<*>> =
                 LinkedHashMap(super.fieldDefinitions)
             result[FIELD_PORT] = portField
+            result[FIELD_INITIAL_COMPOSITION] = initialCompositionIdField
             return result
         }
 
@@ -109,6 +120,7 @@ class TabletConfigurable(private val portFinder: PortFinder, private val eventBu
 
     companion object {
         const val FIELD_PORT = "portId"
+        const val FIELD_INITIAL_COMPOSITION = "compositionId"
         const val STATE_ACTIVE = "active"
         const val STATE_INACTIVE = "inactive"
     }

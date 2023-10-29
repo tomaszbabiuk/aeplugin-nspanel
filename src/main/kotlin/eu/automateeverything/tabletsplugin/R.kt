@@ -18,6 +18,7 @@ package eu.automateeverything.tabletsplugin
 import eu.automateeverything.data.localization.Resource
 
 object R {
+    val field_initial_composition = Resource("Initial composition", "Kompozycja startowa")
     val field_title_hint = Resource("Title", "Tytuł")
     val field_headline_hint = Resource("Headline", "Treść")
     val field_option1_hint = Resource("Option 1", "Opcja 1")
@@ -41,12 +42,20 @@ object R {
     val configurable_tablet_description =
         Resource("A custom control over Android tablet.", "Kontroler dla tabletów z Androidem.")
     val configurable_dialog_add = Resource("Add dialog", "Dodaj dialog")
+    val configurable_composition_add = Resource("Add composition", "Dodaj kompozycję")
     val configurable_dialog_edit = Resource("Edit dialog", "Edytuj dialog")
+    val configurable_composition_edit = Resource("Edit composition", "Edytuj kompozycję")
     val configurable_dialog_title = Resource("Dialogs", "Dialogi")
+    val configurable_composition_title = Resource("Compositions", "Kompozycje")
     val configurable_dialog_description =
         Resource(
             "A dialog than can be displayed on Android tablet.",
             "Dialog wyświetlany na tabletach z androidem"
+        )
+    val configurable_composition_description =
+        Resource(
+            "An unique and totally custom set of user interface to be presented on the tablets.",
+            "Całkowicie unikalny i personalizowany interfejs użytkownika do prezentowania na tabletach."
         )
     val field_port_hint = Resource("Port", "Port")
     val state_unknown = Resource("Unknown", "Nieznany")

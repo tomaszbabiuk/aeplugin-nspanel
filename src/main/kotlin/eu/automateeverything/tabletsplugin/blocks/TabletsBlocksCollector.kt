@@ -19,6 +19,7 @@ import eu.automateeverything.data.Repository
 import eu.automateeverything.domain.automation.BlockFactory
 import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
 import eu.automateeverything.domain.configurable.Configurable
+import eu.automateeverything.tabletsplugin.CompositionConfigurable
 import eu.automateeverything.tabletsplugin.DialogConfigurable
 import org.pf4j.Extension
 
@@ -33,6 +34,10 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
     private fun collectThisDeviceBlocks(thisDevice: Configurable): List<BlockFactory<*>> {
         if (thisDevice is DialogConfigurable) {
             return listOf(ScreenCompositionBlockFactory())
+        }
+
+        if (thisDevice is CompositionConfigurable) {
+            return listOf(ComposeBlockFactory())
         }
 
         return listOf()
