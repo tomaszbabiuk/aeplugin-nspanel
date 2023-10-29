@@ -18,6 +18,7 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.Repository
 import eu.automateeverything.domain.automation.BlockFactory
 import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
+import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.Configurable
 import eu.automateeverything.tabletsplugin.CompositionConfigurable
 import eu.automateeverything.tabletsplugin.DialogConfigurable
@@ -27,7 +28,10 @@ import org.pf4j.Extension
 @Extension
 class TabletsBlocksCollector(private val repository: Repository) : BlockFactoriesCollector {
 
-    override fun collect(thisDevice: Configurable): List<BlockFactory<*>> {
+    override fun collect(
+        thisDevice: Configurable,
+        context: CollectionContext
+    ): List<BlockFactory<*>> {
         return collectThisDeviceBlocks(thisDevice)
     }
 
