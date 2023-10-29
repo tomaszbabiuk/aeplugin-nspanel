@@ -82,6 +82,9 @@ open class CompositionConfigurable(private val repository: Repository) :
                 .trimIndent()
 
     override val hasAutomation: Boolean
+        get() = false
+
+    override val hasComposition: Boolean
         get() = true
 
     override val editableIcon: Boolean

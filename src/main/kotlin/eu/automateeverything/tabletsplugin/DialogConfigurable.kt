@@ -118,6 +118,9 @@ open class DialogConfigurable(private val repository: Repository) : NameDescript
     override val hasAutomation: Boolean
         get() = true
 
+    override val hasComposition: Boolean
+        get() = false
+
     override val editableIcon: Boolean
         get() = false
 
