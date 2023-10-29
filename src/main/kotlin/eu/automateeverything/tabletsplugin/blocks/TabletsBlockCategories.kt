@@ -19,9 +19,7 @@ import eu.automateeverything.data.localization.Resource
 import eu.automateeverything.domain.automation.blocks.BlockCategory
 import eu.automateeverything.tabletsplugin.R
 
-enum class TabletsBlockCategories(
-    override val categoryName: Resource,
-    override val color: Int
-) : BlockCategory {
-    Tablets(R.category_tablets, 180),
+enum class TabletsBlockCategories(override val categoryName: Resource, override val color: Int) :
+    BlockCategory {
+    UI(R.category_ui, 180),
 }

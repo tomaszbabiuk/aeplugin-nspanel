@@ -13,6 +13,8 @@
  *  limitations under the License.
  */
 
+@file:Suppress("FunctionName")
+
 package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.data.localization.Resource
@@ -66,7 +68,7 @@ object R {
             "Wsparcie dla tabletów ściennych pracujących pod kontrolą systemu Android"
         )
     val n_a = Resource("n/a", "nd.")
-    val category_tablets = Resource("Tablets", "Tablety")
+    val category_ui = Resource("User interface", "Interfejs użytkownika")
 
     fun block_show_dialog_message(dialogName: String) =
         Resource("Show \\\"$dialogName\\\"", "Pokaż \\\"$dialogName\\\"")
@@ -76,6 +78,10 @@ object R {
             "\\\"$dialogName\\\" %1 - option %2 selected",
             "\\\"$dialogName\\\" %1 - opcja %2 została wybrana"
         )
+
+    val block_text_message = Resource("Text: %1", "Text %1")
+    val block_headline_message = Resource("Headline: %1", "Nagłówek %1")
+    val block_button_message = Resource("Button:  %1 action: %2", "Przycisk: %1 akcja: %2")
 
     val block_screen_composition_message =
         Resource("Show screen composition on %1 %2", "Pokaż kompozycję ekranu na %1 %2")

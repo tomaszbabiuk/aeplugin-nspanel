@@ -41,7 +41,7 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
         }
 
         if (thisDevice is CompositionConfigurable) {
-            return listOf(ComposeBlockFactory())
+            return listOf(HeadlineBlockFactory(), TextBlockFactory(), ButtonBlockFactory())
         }
 
         return listOf()

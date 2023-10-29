@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022 Tomasz Babiuk
+ * Copyright (c) 2019-2023 Tomasz Babiuk
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  You may not use this file except in compliance with the License.
@@ -17,42 +17,46 @@ package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
-import eu.automateeverything.domain.automation.blocks.CommonBlockCategories
-import java.util.*
+import eu.automateeverything.tabletsplugin.R
 
-class ComposeBlockFactory() : StatementBlockFactory {
+class TextBlockFactory : StatementBlockFactory {
 
-    override val category = CommonBlockCategories.ThisObject
+    override val category = TabletsBlockCategories.UI
 
-    override val type: String = "tablet_compose"
+    override val type: String = "tablet_text"
 
     override fun buildBlock(): RawJson {
-        return RawJson {
+        return RawJson { language ->
             """
+            {
+              "type": "$type",
+              "implicitAlign0": "RIGHT",
+              "message0": "${R.block_text_message.getValue(language)}",
+              "args0": [
                 {
-                  "type": "$type",
-                  "message0": "This screen composition %1 %2",
-                  "args0": [
-                    {
-                      "type": "input_dummy"
-                    },
-                    {
-                      "type": "input_statement",
-                      "name": "NAME",
-                      "check": [
-                        "tablet_headline",
-                        "tablet_button",
-                        "tablet_text",
-                        "tablet_device_value",
-                        "tablet_qrcode"
-                      ]
-                    }
-                  ],
-                  "inputsInline": true,
-                  "colour": 230,
-                  "tooltip": "",
-                  "helpUrl": ""
+                  "type": "field_input",
+                  "name": "TEXT",
+                  "text": ""
                 }
+              ],
+              "previousStatement": [
+                "tablet_headline",
+                "tablet_button",
+                "tablet_text",
+                "tablet_device_value",
+                "tablet_qrcode"
+              ],
+              "nextStatement": [
+                "tablet_headline",
+                "tablet_button",
+                "tablet_text",
+                "tablet_device_value",
+                "tablet_qrcode"
+              ],
+              "colour": ${category.color},
+              "tooltip": "",
+              "helpUrl": ""
+            }
                 """
                 .trimIndent()
         }
