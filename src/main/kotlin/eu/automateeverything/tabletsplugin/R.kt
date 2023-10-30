@@ -69,6 +69,7 @@ object R {
         )
     val n_a = Resource("n/a", "nd.")
     val category_ui = Resource("User interface", "Interfejs użytkownika")
+    val category_actions = Resource("Actions", "Akcje")
 
     fun block_show_dialog_message(dialogName: String) =
         Resource("Show \\\"$dialogName\\\"", "Pokaż \\\"$dialogName\\\"")
@@ -82,7 +83,4 @@ object R {
     val block_text_message = Resource("Text: %1", "Text %1")
     val block_headline_message = Resource("Headline: %1", "Nagłówek %1")
     val block_button_message = Resource("Button:  %1 action: %2", "Przycisk: %1 akcja: %2")
-
-    val block_screen_composition_message =
-        Resource("Show screen composition on %1 %2", "Pokaż kompozycję ekranu na %1 %2")
 }

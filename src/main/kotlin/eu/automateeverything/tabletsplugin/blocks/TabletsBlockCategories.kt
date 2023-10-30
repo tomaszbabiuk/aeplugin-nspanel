@@ -22,4 +22,5 @@ import eu.automateeverything.tabletsplugin.R
 enum class TabletsBlockCategories(override val categoryName: Resource, override val color: Int) :
     BlockCategory {
     UI(R.category_ui, 180),
+    Actions(R.category_actions, 270)
 }

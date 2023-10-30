@@ -17,11 +17,11 @@ package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.Repository
 import eu.automateeverything.domain.automation.BlockFactory
+import eu.automateeverything.domain.automation.StatementBlockFactory
 import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
 import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.Configurable
 import eu.automateeverything.tabletsplugin.CompositionConfigurable
-import eu.automateeverything.tabletsplugin.DialogConfigurable
 import org.pf4j.Extension
 
 @Suppress("unused")
@@ -30,16 +30,13 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
 
     override fun collect(
         thisDevice: Configurable,
+        instanceId: Long?,
         context: CollectionContext
     ): List<BlockFactory<*>> {
-        return collectThisDeviceBlocks(thisDevice)
+        return collectUIBlocks(thisDevice) + collectNavigationFactories(instanceId)
     }
 
-    private fun collectThisDeviceBlocks(thisDevice: Configurable): List<BlockFactory<*>> {
-        if (thisDevice is DialogConfigurable) {
-            return listOf(ScreenCompositionBlockFactory())
-        }
-
+    private fun collectUIBlocks(thisDevice: Configurable): List<StatementBlockFactory> {
         if (thisDevice is CompositionConfigurable) {
             return listOf(HeadlineBlockFactory(), TextBlockFactory(), ButtonBlockFactory())
         }
@@ -47,17 +44,11 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
         return listOf()
     }
 
-    private fun collectShowDialogFactories(): List<ShowDialogBlockFactory> {
+    private fun collectNavigationFactories(instanceId: Long?): List<NavigateBlockFactory> {
         return repository
             .getAllInstances()
-            .filter { it.clazz == DialogConfigurable::class.java.name }
-            .map { ShowDialogBlockFactory(it) }
-    }
-
-    private fun collectOptionSelectedTriggerFactories(): List<OptionSelectedTriggerBlockFactory> {
-        return repository
-            .getAllInstances()
-            .filter { it.clazz == DialogConfigurable::class.java.name }
-            .map { OptionSelectedTriggerBlockFactory(it) }
+            .filter { it.clazz == CompositionConfigurable::class.java.name }
+            .filter { it.id != instanceId }
+            .map { NavigateBlockFactory(it) }
     }
 }
