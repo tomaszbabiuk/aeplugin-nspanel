@@ -31,11 +31,11 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
         thisDevice: Configurable,
         instanceId: Long?,
         context: CollectionContext
-    ): List<BlockFactory<*>> {
+    ): List<BlockFactory<*, *>> {
         return collectUIBlocks(thisDevice) + collectNavigationFactories(instanceId)
     }
 
-    private fun collectUIBlocks(thisDevice: Configurable): List<BlockFactory<*>> {
+    private fun collectUIBlocks(thisDevice: Configurable): List<BlockFactory<*, *>> {
         if (thisDevice is CompositionConfigurable) {
             return listOf(HeadlineBlockFactory(), TextBlockFactory(), ButtonBlockFactory())
         }
@@ -43,7 +43,7 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
         return listOf()
     }
 
-    private fun collectNavigationFactories(instanceId: Long?): List<BlockFactory<*>> {
+    private fun collectNavigationFactories(instanceId: Long?): List<BlockFactory<*, *>> {
         return repository
             .getAllInstances()
             .filter { it.clazz == CompositionConfigurable::class.java.name }

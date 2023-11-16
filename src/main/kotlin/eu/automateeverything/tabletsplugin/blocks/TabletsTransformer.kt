@@ -15,17 +15,13 @@
 
 package eu.automateeverything.tabletsplugin.blocks
 
-import eu.automateeverything.domain.automation.AutomationContext
 import eu.automateeverything.domain.automation.Block
 import eu.automateeverything.domain.automation.StatementNode
+import eu.automateeverything.tabletsplugin.composition.UIContext
 
 class TabletsTransformer {
 
-    fun transform(
-        blocks: List<Block>,
-        context: AutomationContext,
-        order: Int = 0
-    ): List<StatementNode> {
+    fun transform(blocks: List<Block>, context: UIContext, order: Int = 0): List<StatementNode> {
         val masterNodes = ArrayList<StatementNode>()
 
         blocks.forEach {

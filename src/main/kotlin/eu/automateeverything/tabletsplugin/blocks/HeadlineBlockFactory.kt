@@ -20,6 +20,7 @@ import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
 import eu.automateeverything.tabletsplugin.composition.UIBlock
 import eu.automateeverything.tabletsplugin.composition.UIBlockFactory
+import eu.automateeverything.tabletsplugin.composition.UIContext
 
 class HeadlineBlockFactory : UIBlockFactory {
 
@@ -67,7 +68,7 @@ class HeadlineBlockFactory : UIBlockFactory {
     override fun transform(
         block: Block,
         next: StatementNode?,
-        context: AutomationContext,
+        context: UIContext,
         transformer: BlocklyTransformer,
         order: Int
     ): UIBlock {

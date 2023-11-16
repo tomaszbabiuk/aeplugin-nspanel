@@ -21,6 +21,7 @@ import eu.automateeverything.domain.automation.*
 import eu.automateeverything.domain.configurable.NameDescriptionConfigurable.Companion.FIELD_NAME
 import eu.automateeverything.tabletsplugin.composition.UIBlock
 import eu.automateeverything.tabletsplugin.composition.UIBlockFactory
+import eu.automateeverything.tabletsplugin.composition.UIContext
 
 class NavigateBlockFactory(private val dashboard: InstanceDto) : UIBlockFactory {
 
@@ -49,7 +50,7 @@ class NavigateBlockFactory(private val dashboard: InstanceDto) : UIBlockFactory 
     override fun transform(
         block: Block,
         next: StatementNode?,
-        context: AutomationContext,
+        context: UIContext,
         transformer: BlocklyTransformer,
         order: Int
     ): UIBlock {
