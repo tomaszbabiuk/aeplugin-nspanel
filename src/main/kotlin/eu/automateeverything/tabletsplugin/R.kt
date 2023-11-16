@@ -70,9 +70,7 @@ object R {
     val n_a = Resource("n/a", "nd.")
     val category_ui = Resource("User interface", "Interfejs użytkownika")
     val category_actions = Resource("Actions", "Akcje")
-
-    fun block_show_dialog_message(dialogName: String) =
-        Resource("Show \\\"$dialogName\\\"", "Pokaż \\\"$dialogName\\\"")
+    val category_layouts = Resource("Layouts", "Układ")
 
     fun block_dialog_option_selected(dialogName: String) =
         Resource(
@@ -80,7 +78,9 @@ object R {
             "\\\"$dialogName\\\" %1 - opcja %2 została wybrana"
         )
 
+    val block_start_here_message = Resource("Start here", "Zacznij tutaj")
     val block_text_message = Resource("Text: %1", "Text %1")
     val block_headline_message = Resource("Headline: %1", "Nagłówek %1")
     val block_button_message = Resource("Button:  %1 action: %2", "Przycisk: %1 akcja: %2")
+    val block_single_column = Resource("Single column %1 %2", "Pojedyńcza kolumna %1 %2")
 }

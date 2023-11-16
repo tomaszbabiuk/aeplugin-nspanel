@@ -37,7 +37,13 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
 
     private fun collectUIBlocks(thisDevice: Configurable): List<BlockFactory<*, *>> {
         if (thisDevice is CompositionConfigurable) {
-            return listOf(HeadlineBlockFactory(), TextBlockFactory(), ButtonBlockFactory())
+            return listOf(
+                HeadlineBlockFactory(),
+                TextBlockFactory(),
+                ButtonBlockFactory(),
+                StartHereBlockFactory(),
+                SingleColumnBlockFactory()
+            )
         }
 
         return listOf()
