@@ -15,21 +15,30 @@
 
 package eu.automateeverything.tabletsplugin
 
+import eu.automateeverything.data.Repository
 import eu.automateeverything.data.automation.State
 import eu.automateeverything.data.fields.InstanceReference
 import eu.automateeverything.data.fields.InstanceReferenceType
 import eu.automateeverything.data.fields.PortReference
 import eu.automateeverything.data.fields.PortReferenceType
 import eu.automateeverything.data.instances.InstanceDto
+import eu.automateeverything.domain.automation.AutomationContext
 import eu.automateeverything.domain.automation.AutomationUnit
+import eu.automateeverything.domain.automation.BlocklyParser
+import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.*
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.PortFinder
+import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
+import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
 import org.pf4j.Extension
 
 @Extension
-class TabletConfigurable(private val portFinder: PortFinder, private val eventBus: EventBus) :
-    StateDeviceConfigurable() {
+class TabletConfigurable(
+    private val portFinder: PortFinder,
+    private val eventBus: EventBus,
+    private val repository: Repository
+) : StateDeviceConfigurable() {
 
     override val parent: Class<out Configurable>
         get() = TabletsConfigurable::class.java
@@ -55,6 +64,20 @@ class TabletConfigurable(private val portFinder: PortFinder, private val eventBu
         val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
         val name = extractFieldValue(instance, nameField)
 
+        val initialCompositionId = extractFieldValue(instance, initialCompositionIdField)
+        val initialCompositionInstance = repository.getInstance(initialCompositionId.toLong())
+        val initialCompositionXml = BlocklyParser().parse(initialCompositionInstance.composition!!)
+        val transformer = TabletsTransformer()
+        val blocksCache =
+            TabletsBlocksCollector(repository)
+                .collect(
+                    CompositionConfigurable(repository),
+                    initialCompositionInstance.id,
+                    CollectionContext.Composition
+                )
+        val context = AutomationContext(instance, this, mapOf(), mapOf(), blocksCache, eventBus)
+        val x = transformer.transform(initialCompositionXml.blocks!!, context, 0)
+        println(x)
         return TabletAutomationUnit(eventBus, instance, name, states, port as TabletPort)
     }
 

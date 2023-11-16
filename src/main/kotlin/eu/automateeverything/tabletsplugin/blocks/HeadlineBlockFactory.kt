@@ -18,8 +18,10 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
+import eu.automateeverything.tabletsplugin.composition.UIBlock
+import eu.automateeverything.tabletsplugin.composition.UIBlockFactory
 
-class HeadlineBlockFactory : StatementBlockFactory {
+class HeadlineBlockFactory : UIBlockFactory {
 
     override val category = TabletsBlockCategories.UI
 
@@ -68,11 +70,8 @@ class HeadlineBlockFactory : StatementBlockFactory {
         context: AutomationContext,
         transformer: BlocklyTransformer,
         order: Int
-    ): StatementNode {
+    ): UIBlock {
+
         throw NotImplementedError()
     }
-
-    //    override fun dependsOn(): List<Long> {
-    //        return listOf(dialog.id)
-    //    }
 }

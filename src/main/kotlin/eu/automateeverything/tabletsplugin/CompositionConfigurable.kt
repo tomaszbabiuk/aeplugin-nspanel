@@ -26,16 +26,6 @@ open class CompositionConfigurable(private val repository: Repository) :
     override val parent: Class<out Configurable>
         get() = TabletsConfigurable::class.java
 
-    private val titleField =
-        StringField(
-            FIELD_TITLE,
-            R.field_title_hint,
-            50,
-            "",
-            RequiredStringValidator(),
-            MaxStringLengthValidator(50)
-        )
-
     override val fieldDefinitions: Map<String, FieldDefinition<*>>
         get() {
             val uniqueNameValidator =
@@ -48,7 +38,6 @@ open class CompositionConfigurable(private val repository: Repository) :
 
             result[FIELD_NAME] = nameField.includeValidator(uniqueNameValidator)
             result[FIELD_DESCRIPTION] = descriptionField
-            result[FIELD_TITLE] = titleField
             return result
         }
 
@@ -95,8 +84,4 @@ open class CompositionConfigurable(private val repository: Repository) :
 
     override val generable: Boolean
         get() = false
-
-    companion object {
-        const val FIELD_TITLE = "title"
-    }
 }

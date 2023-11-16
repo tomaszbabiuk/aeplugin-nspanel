@@ -19,8 +19,10 @@ import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.domain.configurable.NameDescriptionConfigurable.Companion.FIELD_NAME
+import eu.automateeverything.tabletsplugin.composition.UIBlock
+import eu.automateeverything.tabletsplugin.composition.UIBlockFactory
 
-class NavigateBlockFactory(private val dashboard: InstanceDto) : StatementBlockFactory {
+class NavigateBlockFactory(private val dashboard: InstanceDto) : UIBlockFactory {
 
     override val category = TabletsBlockCategories.Actions
 
@@ -50,7 +52,7 @@ class NavigateBlockFactory(private val dashboard: InstanceDto) : StatementBlockF
         context: AutomationContext,
         transformer: BlocklyTransformer,
         order: Int
-    ): StatementNode {
+    ): UIBlock {
         throw NotImplementedError()
     }
 

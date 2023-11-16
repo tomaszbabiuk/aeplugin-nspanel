@@ -17,7 +17,6 @@ package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.Repository
 import eu.automateeverything.domain.automation.BlockFactory
-import eu.automateeverything.domain.automation.StatementBlockFactory
 import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
 import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.Configurable
@@ -36,7 +35,7 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
         return collectUIBlocks(thisDevice) + collectNavigationFactories(instanceId)
     }
 
-    private fun collectUIBlocks(thisDevice: Configurable): List<StatementBlockFactory> {
+    private fun collectUIBlocks(thisDevice: Configurable): List<BlockFactory<*>> {
         if (thisDevice is CompositionConfigurable) {
             return listOf(HeadlineBlockFactory(), TextBlockFactory(), ButtonBlockFactory())
         }
@@ -44,7 +43,7 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
         return listOf()
     }
 
-    private fun collectNavigationFactories(instanceId: Long?): List<NavigateBlockFactory> {
+    private fun collectNavigationFactories(instanceId: Long?): List<BlockFactory<*>> {
         return repository
             .getAllInstances()
             .filter { it.clazz == CompositionConfigurable::class.java.name }

@@ -18,8 +18,10 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
+import eu.automateeverything.tabletsplugin.composition.UIBlock
+import eu.automateeverything.tabletsplugin.composition.UIBlockFactory
 
-class TextBlockFactory : StatementBlockFactory {
+class TextBlockFactory : UIBlockFactory {
 
     override val category = TabletsBlockCategories.UI
 
@@ -68,11 +70,11 @@ class TextBlockFactory : StatementBlockFactory {
         context: AutomationContext,
         transformer: BlocklyTransformer,
         order: Int
-    ): StatementNode {
-        throw NotImplementedError()
-    }
+    ): UIBlock {
+        val textField =
+            block.fields!!.find { it.name == "TEXT" }
+                ?: throw MalformedBlockException(block.type, "Should have TEXT field defined")
 
-    //    override fun dependsOn(): List<Long> {
-    //        return listOf(dialog.id)
-    //    }
+        return UIBlock(text = textField.value)
+    }
 }
