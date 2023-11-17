@@ -55,7 +55,6 @@ class StartHereBlockFactory : UIBlockFactory {
         next: StatementNode?,
         context: UIContext,
         transformer: TabletsTransformer,
-        order: Int
     ): UIBlock {
         return UIBlock()
     }

@@ -62,7 +62,6 @@ class SingleColumnBlockFactory : UIBlockFactory {
         next: StatementNode?,
         context: UIContext,
         transformer: TabletsTransformer,
-        order: Int
     ): UIBlock {
         val content =
             block.statements?.find { it.name == "CONTENT" }
@@ -70,7 +69,7 @@ class SingleColumnBlockFactory : UIBlockFactory {
 
         var iBlock = content.block
         while (iBlock != null) {
-            transformer.transformStatement(iBlock, context, order)
+            transformer.transformStatement(iBlock, context)
             iBlock = iBlock.next?.block
         }
 

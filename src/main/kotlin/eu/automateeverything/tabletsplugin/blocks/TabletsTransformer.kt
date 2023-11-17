@@ -22,25 +22,25 @@ import eu.automateeverything.tabletsplugin.composition.UIContext
 
 class TabletsTransformer {
 
-    fun transform(blocks: List<Block>, context: UIContext, order: Int = 0): List<UIBlock> {
+    fun transform(blocks: List<Block>, context: UIContext): List<UIBlock> {
         val masterNodes = ArrayList<UIBlock>()
 
-        blocks.filter { it.type == "single" }.forEach { transformStartingPoint(it, context, order) }
+        blocks.filter { it.type == "single" }.forEach { transformStartingPoint(it, context) }
 
         return masterNodes
     }
 
-    fun transformStatement(block: Block, context: UIContext, order: Int = 0): StatementNode {
+    fun transformStatement(block: Block, context: UIContext): StatementNode {
         var next: StatementNode? = null
         if (block.next != null) {
-            next = transformStatement(block.next!!.block!!, context, order)
+            next = transformStatement(block.next!!.block!!, context)
         }
 
         val blockFactory =
             context.factoriesCache.filterIsInstance<UIBlockFactory>().find { it.type == block.type }
 
         if (blockFactory != null) {
-            return blockFactory.transform(block, next, context, this, order)
+            return blockFactory.transform(block, next, context, this)
         }
 
         throw UnknownStatementBlockException(block.type)
@@ -49,11 +49,10 @@ class TabletsTransformer {
     private fun transformStartingPoint(
         block: Block,
         context: UIContext,
-        order: Int = 0
     ): StatementNode {
         var next: StatementNode? = null
         if (block.next != null) {
-            next = transformStatement(block.next!!.block!!, context, order)
+            next = transformStatement(block.next!!.block!!, context)
         }
 
         val blockFactory =
@@ -62,7 +61,7 @@ class TabletsTransformer {
             }
 
         if (blockFactory != null) {
-            return blockFactory.transform(block, next, context, this, order)
+            return blockFactory.transform(block, next, context, this)
         }
 
         throw UnknownTriggerBlockException(block.type)

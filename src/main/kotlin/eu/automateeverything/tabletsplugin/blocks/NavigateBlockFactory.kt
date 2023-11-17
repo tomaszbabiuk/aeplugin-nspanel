@@ -52,7 +52,6 @@ class NavigateBlockFactory(private val dashboard: InstanceDto) : UIBlockFactory 
         next: StatementNode?,
         context: UIContext,
         transformer: TabletsTransformer,
-        order: Int
     ): UIBlock {
         throw NotImplementedError()
     }

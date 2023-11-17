@@ -70,7 +70,6 @@ class TextBlockFactory : UIBlockFactory {
         next: StatementNode?,
         context: UIContext,
         transformer: TabletsTransformer,
-        order: Int
     ): UIBlock {
         val textField =
             block.fields!!.find { it.name == "TEXT" }
