@@ -44,20 +44,20 @@ object R {
     val configurable_tablet_description =
         Resource("A custom control over Android tablet.", "Kontroler dla tabletów z Androidem.")
     val configurable_dialog_add = Resource("Add dialog", "Dodaj dialog")
-    val configurable_composition_add = Resource("Add composition", "Dodaj kompozycję")
+    val configurable_dashboard_add = Resource("Add dashboard", "Dodaj panel")
     val configurable_dialog_edit = Resource("Edit dialog", "Edytuj dialog")
-    val configurable_composition_edit = Resource("Edit composition", "Edytuj kompozycję")
+    val configurable_dashboard_edit = Resource("Edit dashboard", "Edytuj dashboard")
     val configurable_dialog_title = Resource("Dialogs", "Dialogi")
-    val configurable_composition_title = Resource("Compositions", "Kompozycje")
+    val configurable_dashboard_title = Resource("Dashboards", "Panele kontrolne")
     val configurable_dialog_description =
         Resource(
             "A dialog than can be displayed on Android tablet.",
             "Dialog wyświetlany na tabletach z androidem"
         )
-    val configurable_composition_description =
+    val configurable_dashboard_description =
         Resource(
-            "An unique and totally custom set of user interface to be presented on the tablets.",
-            "Całkowicie unikalny i personalizowany interfejs użytkownika do prezentowania na tabletach."
+            "An unique and totally custom set of user interface in a form of a dashboard to be presented on the tablets.",
+            "Całkowicie unikalny i personalizowany interfejs użytkownika do prezentowania w formie tablic kontrolnych na tabletach."
         )
     val field_port_hint = Resource("Port", "Port")
     val state_unknown = Resource("Unknown", "Nieznany")

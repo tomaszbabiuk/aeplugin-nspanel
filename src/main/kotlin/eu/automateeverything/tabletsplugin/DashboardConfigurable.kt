@@ -20,7 +20,7 @@ import eu.automateeverything.domain.configurable.*
 import org.pf4j.Extension
 
 @Extension
-open class CompositionConfigurable(private val repository: Repository) :
+open class DashboardConfigurable(private val repository: Repository) :
     NameDescriptionConfigurable() {
 
     override val parent: Class<out Configurable>
@@ -30,7 +30,7 @@ open class CompositionConfigurable(private val repository: Repository) :
         get() {
             val uniqueNameValidator =
                 UniqueValueAcrossItsTypeValidator(
-                    CompositionConfigurable::class.java,
+                    DashboardConfigurable::class.java,
                     repository,
                     FIELD_NAME
                 )
@@ -41,10 +41,10 @@ open class CompositionConfigurable(private val repository: Repository) :
             return result
         }
 
-    override val addNewRes = R.configurable_composition_add
-    override val editRes = R.configurable_composition_edit
-    override val titleRes = R.configurable_composition_title
-    override val descriptionRes = R.configurable_composition_description
+    override val addNewRes = R.configurable_dashboard_add
+    override val editRes = R.configurable_dashboard_edit
+    override val titleRes = R.configurable_dashboard_title
+    override val descriptionRes = R.configurable_dashboard_description
 
     override val iconRaw: String
         get() =

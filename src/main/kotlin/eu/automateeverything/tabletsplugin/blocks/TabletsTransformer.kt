@@ -15,21 +15,56 @@
 
 package eu.automateeverything.tabletsplugin.blocks
 
-import eu.automateeverything.domain.automation.Block
-import eu.automateeverything.domain.automation.StatementNode
+import eu.automateeverything.domain.automation.*
+import eu.automateeverything.tabletsplugin.composition.UIBlock
+import eu.automateeverything.tabletsplugin.composition.UIBlockFactory
 import eu.automateeverything.tabletsplugin.composition.UIContext
 
 class TabletsTransformer {
 
-    fun transform(blocks: List<Block>, context: UIContext, order: Int = 0): List<StatementNode> {
-        val masterNodes = ArrayList<StatementNode>()
+    fun transform(blocks: List<Block>, context: UIContext, order: Int = 0): List<UIBlock> {
+        val masterNodes = ArrayList<UIBlock>()
 
-        blocks.forEach {
-            //            val masterNode = transformTrigger(it, context, order)
-            //            masterNodes.add(masterNode)
-            println(it)
-        }
+        blocks.filter { it.type == "single" }.forEach { transformStartingPoint(it, context, order) }
 
         return masterNodes
+    }
+
+    fun transformStatement(block: Block, context: UIContext, order: Int = 0): StatementNode {
+        var next: StatementNode? = null
+        if (block.next != null) {
+            next = transformStatement(block.next!!.block!!, context, order)
+        }
+
+        val blockFactory =
+            context.factoriesCache.filterIsInstance<UIBlockFactory>().find { it.type == block.type }
+
+        if (blockFactory != null) {
+            return blockFactory.transform(block, next, context, this, order)
+        }
+
+        throw UnknownStatementBlockException(block.type)
+    }
+
+    private fun transformStartingPoint(
+        block: Block,
+        context: UIContext,
+        order: Int = 0
+    ): StatementNode {
+        var next: StatementNode? = null
+        if (block.next != null) {
+            next = transformStatement(block.next!!.block!!, context, order)
+        }
+
+        val blockFactory =
+            context.factoriesCache.filterIsInstance<StartHereBlockFactory>().find {
+                it.type == block.type
+            }
+
+        if (blockFactory != null) {
+            return blockFactory.transform(block, next, context, this, order)
+        }
+
+        throw UnknownTriggerBlockException(block.type)
     }
 }

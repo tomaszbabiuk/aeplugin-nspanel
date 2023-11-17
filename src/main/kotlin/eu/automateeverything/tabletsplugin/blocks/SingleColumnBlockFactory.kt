@@ -61,13 +61,19 @@ class SingleColumnBlockFactory : UIBlockFactory {
         block: Block,
         next: StatementNode?,
         context: UIContext,
-        transformer: BlocklyTransformer,
+        transformer: TabletsTransformer,
         order: Int
     ): UIBlock {
-        val textField =
-            block.fields!!.find { it.name == "TEXT" }
-                ?: throw MalformedBlockException(block.type, "Should have TEXT field defined")
+        val content =
+            block.statements?.find { it.name == "CONTENT" }
+                ?: throw MalformedBlockException(type, "CONTENT statements missing")
 
-        return UIBlock(text = textField.value)
+        var iBlock = content.block
+        while (iBlock != null) {
+            transformer.transformStatement(iBlock, context, order)
+            iBlock = iBlock.next?.block
+        }
+
+        return UIBlock()
     }
 }

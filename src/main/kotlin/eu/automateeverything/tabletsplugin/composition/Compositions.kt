@@ -2,8 +2,9 @@ package eu.automateeverything.tabletsplugin.composition
 
 import eu.automateeverything.domain.automation.BlockFactory
 import eu.automateeverything.domain.automation.StatementNode
+import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
 
-interface UIBlockFactory : BlockFactory<UIBlock, UIContext>
+interface UIBlockFactory : BlockFactory<UIBlock, UIContext, TabletsTransformer>
 
 data class UIBlock(
     val headline: String? = null,
@@ -11,4 +12,4 @@ data class UIBlock(
     override val next: StatementNode? = null
 ) : StatementNode
 
-class UIContext
+data class UIContext(val factoriesCache: List<BlockFactory<*, *, *>>)

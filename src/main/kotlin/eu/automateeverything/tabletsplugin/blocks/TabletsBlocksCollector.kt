@@ -20,7 +20,7 @@ import eu.automateeverything.domain.automation.BlockFactory
 import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
 import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.Configurable
-import eu.automateeverything.tabletsplugin.CompositionConfigurable
+import eu.automateeverything.tabletsplugin.DashboardConfigurable
 import org.pf4j.Extension
 
 @Suppress("unused")
@@ -31,12 +31,12 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
         thisDevice: Configurable,
         instanceId: Long?,
         context: CollectionContext
-    ): List<BlockFactory<*, *>> {
+    ): List<BlockFactory<*, *, *>> {
         return collectUIBlocks(thisDevice) + collectNavigationFactories(instanceId)
     }
 
-    private fun collectUIBlocks(thisDevice: Configurable): List<BlockFactory<*, *>> {
-        if (thisDevice is CompositionConfigurable) {
+    private fun collectUIBlocks(thisDevice: Configurable): List<BlockFactory<*, *, *>> {
+        if (thisDevice is DashboardConfigurable) {
             return listOf(
                 HeadlineBlockFactory(),
                 TextBlockFactory(),
@@ -49,10 +49,10 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
         return listOf()
     }
 
-    private fun collectNavigationFactories(instanceId: Long?): List<BlockFactory<*, *>> {
+    private fun collectNavigationFactories(instanceId: Long?): List<BlockFactory<*, *, *>> {
         return repository
             .getAllInstances()
-            .filter { it.clazz == CompositionConfigurable::class.java.name }
+            .filter { it.clazz == DashboardConfigurable::class.java.name }
             .filter { it.id != instanceId }
             .map { NavigateBlockFactory(it) }
     }

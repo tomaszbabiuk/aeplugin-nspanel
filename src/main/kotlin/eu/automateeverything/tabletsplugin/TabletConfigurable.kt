@@ -24,9 +24,11 @@ import eu.automateeverything.data.fields.PortReferenceType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.AutomationUnit
 import eu.automateeverything.domain.automation.BlocklyParser
+import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.*
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.PortFinder
+import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
 import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
 import eu.automateeverything.tabletsplugin.composition.UIContext
 import org.pf4j.Extension
@@ -53,7 +55,7 @@ class TabletConfigurable(
         InstanceReferenceField(
             FIELD_INITIAL_COMPOSITION,
             R.field_initial_composition,
-            InstanceReference(CompositionConfigurable::class.java, InstanceReferenceType.Single),
+            InstanceReference(DashboardConfigurable::class.java, InstanceReferenceType.Single),
             RequiredStringValidator()
         )
 
@@ -62,7 +64,15 @@ class TabletConfigurable(
         val initialCompositionInstance = repository.getInstance(initialCompositionId.toLong())
         val initialCompositionXml = BlocklyParser().parse(initialCompositionInstance.composition!!)
         val transformer = TabletsTransformer()
-        val context = UIContext()
+
+        val factoriesCache =
+            TabletsBlocksCollector(repository)
+                .collect(
+                    DashboardConfigurable(repository),
+                    initialCompositionInstance.id,
+                    CollectionContext.Automation
+                )
+        val context = UIContext(factoriesCache)
         val x = transformer.transform(initialCompositionXml.blocks!!, context, 0)
         println(x)
 
