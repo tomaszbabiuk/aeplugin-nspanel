@@ -18,6 +18,7 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
+import eu.automateeverything.tabletsplugin.composition.Headline
 import eu.automateeverything.tabletsplugin.composition.UIBlock
 import eu.automateeverything.tabletsplugin.composition.UIBlockFactory
 import eu.automateeverything.tabletsplugin.composition.UIContext
@@ -71,6 +72,10 @@ class HeadlineBlockFactory : UIBlockFactory {
         context: UIContext,
         transformer: TabletsTransformer,
     ): UIBlock {
-        return UIBlock()
+        val textField =
+            block.fields!!.find { it.name == "TEXT" }
+                ?: throw MalformedBlockException(block.type, "Should have TEXT field defined")
+
+        return UIBlock(headline = Headline(textField.value ?: ""))
     }
 }

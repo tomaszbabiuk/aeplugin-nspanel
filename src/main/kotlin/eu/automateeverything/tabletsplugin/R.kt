@@ -72,12 +72,6 @@ object R {
     val category_actions = Resource("Actions", "Akcje")
     val category_layouts = Resource("Layouts", "Układ")
 
-    fun block_dialog_option_selected(dialogName: String) =
-        Resource(
-            "\\\"$dialogName\\\" %1 - option %2 selected",
-            "\\\"$dialogName\\\" %1 - opcja %2 została wybrana"
-        )
-
     val block_start_here_message = Resource("Start here", "Zacznij tutaj")
     val block_text_message = Resource("Text: %1", "Text %1")
     val block_headline_message = Resource("Headline: %1", "Nagłówek %1")

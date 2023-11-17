@@ -73,7 +73,7 @@ class TabletConfigurable(
                     CollectionContext.Automation
                 )
         val context = UIContext(factoriesCache)
-        val x = transformer.transform(initialCompositionXml.blocks!!, context, 0)
+        val x = transformer.transform(initialCompositionXml.blocks!!, context)
         println(x)
 
         val portId = extractFieldValue(instance, portField)

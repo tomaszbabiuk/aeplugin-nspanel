@@ -18,6 +18,7 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
+import eu.automateeverything.tabletsplugin.composition.SingleColumn
 import eu.automateeverything.tabletsplugin.composition.UIBlock
 import eu.automateeverything.tabletsplugin.composition.UIBlockFactory
 import eu.automateeverything.tabletsplugin.composition.UIContext
@@ -67,12 +68,15 @@ class SingleColumnBlockFactory : UIBlockFactory {
             block.statements?.find { it.name == "CONTENT" }
                 ?: throw MalformedBlockException(type, "CONTENT statements missing")
 
+        val children = ArrayList<UIBlock>()
+
         var iBlock = content.block
         while (iBlock != null) {
-            transformer.transformStatement(iBlock, context)
+            val child = transformer.transformStatement(iBlock, context)
+            children.add(child)
             iBlock = iBlock.next?.block
         }
 
-        return UIBlock()
+        return UIBlock(singleColumn = SingleColumn(children))
     }
 }

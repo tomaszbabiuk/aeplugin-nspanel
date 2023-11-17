@@ -22,15 +22,14 @@ import eu.automateeverything.tabletsplugin.composition.UIContext
 
 class TabletsTransformer {
 
-    fun transform(blocks: List<Block>, context: UIContext): List<UIBlock> {
-        val masterNodes = ArrayList<UIBlock>()
-
-        blocks.filter { it.type == "single" }.forEach { transformStartingPoint(it, context) }
-
-        return masterNodes
+    fun transform(blocks: List<Block>, context: UIContext): UIBlock? {
+        return blocks
+            .filter { it.type == "single" }
+            .map { transformStartingPoint(it, context) }
+            .firstOrNull()
     }
 
-    fun transformStatement(block: Block, context: UIContext): StatementNode {
+    fun transformStatement(block: Block, context: UIContext): UIBlock {
         var next: StatementNode? = null
         if (block.next != null) {
             next = transformStatement(block.next!!.block!!, context)
@@ -49,7 +48,7 @@ class TabletsTransformer {
     private fun transformStartingPoint(
         block: Block,
         context: UIContext,
-    ): StatementNode {
+    ): UIBlock {
         var next: StatementNode? = null
         if (block.next != null) {
             next = transformStatement(block.next!!.block!!, context)
