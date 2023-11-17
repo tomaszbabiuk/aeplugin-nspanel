@@ -20,12 +20,14 @@ import eu.automateeverything.data.configurables.ControlType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.StateDeviceAutomationUnitBase
 import eu.automateeverything.domain.events.EventBus
+import eu.automateeverything.tabletsplugin.composition.UIBlock
 import java.util.*
 
 class TabletAutomationUnit(
     eventBus: EventBus,
     instance: InstanceDto,
     name: String,
+    composition: UIBlock?,
     states: Map<String, State>,
     private val port: TabletPort,
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {

@@ -56,8 +56,10 @@ class StartHereBlockFactory : UIBlockFactory {
         context: UIContext,
         transformer: TabletsTransformer,
     ): UIBlock {
+        if (next != null && next is UIBlock) {
+            return next
+        }
 
-        // transformer.transformStatement(next!!, context)
         return UIBlock()
     }
 }

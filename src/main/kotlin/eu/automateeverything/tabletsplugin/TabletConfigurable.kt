@@ -30,6 +30,7 @@ import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.PortFinder
 import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
 import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
+import eu.automateeverything.tabletsplugin.composition.UIBlock
 import eu.automateeverything.tabletsplugin.composition.UIContext
 import org.pf4j.Extension
 
@@ -60,6 +61,22 @@ class TabletConfigurable(
         )
 
     override fun buildAutomationUnit(instance: InstanceDto): AutomationUnit<State> {
+        val portId = extractFieldValue(instance, portField)
+        val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
+        val name = extractFieldValue(instance, nameField)
+        val composition = resolveComposition(instance)
+
+        return TabletAutomationUnit(
+            eventBus,
+            instance,
+            name,
+            composition,
+            states,
+            port as TabletPort
+        )
+    }
+
+    private fun resolveComposition(instance: InstanceDto): UIBlock? {
         val initialCompositionId = extractFieldValue(instance, initialCompositionIdField)
         val initialCompositionInstance = repository.getInstance(initialCompositionId.toLong())
         val initialCompositionXml = BlocklyParser().parse(initialCompositionInstance.composition!!)
@@ -73,14 +90,7 @@ class TabletConfigurable(
                     CollectionContext.Automation
                 )
         val context = UIContext(factoriesCache)
-        val x = transformer.transform(initialCompositionXml.blocks!!, context)
-        println(x)
-
-        val portId = extractFieldValue(instance, portField)
-        val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
-        val name = extractFieldValue(instance, nameField)
-
-        return TabletAutomationUnit(eventBus, instance, name, states, port as TabletPort)
+        return transformer.transform(initialCompositionXml.blocks!!, context)
     }
 
     override val states: Map<String, State>
