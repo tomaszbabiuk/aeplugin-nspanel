@@ -1,7 +1,7 @@
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.tabletsplugin.interop.ActiveSceneDto
-import eu.automateeverything.tabletsplugin.interop.DialogDto
+import eu.automateeverything.tabletsplugin.interop.DashboardDto
+import eu.automateeverything.tabletsplugin.interop.UIBlock
 import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import java.io.IOException
 import java.net.InetAddress
@@ -96,17 +96,17 @@ class AETabletClient(
         return client
     }
 
-    public fun releasePutQueue() {
+    fun releasePutQueue() {
         while (putQueue.size > 0) {
             val firstToPut = putQueue.removeFirst()
             put(firstToPut.first, firstToPut.second)
         }
     }
 
-    fun observeActiveScene(handler: (ActiveSceneDto) -> Unit): CoapClient {
-        return observe("/activescene") {
+    fun observeDashboard(handler: (DashboardDto) -> Unit): CoapClient {
+        return observe("/dashboard") {
             val activeSceneDto =
-                binaryFormat.decodeFromByteArray(ActiveSceneDto.serializer(), it.payload)
+                binaryFormat.decodeFromByteArray(DashboardDto.serializer(), it.payload)
             handler(activeSceneDto)
         }
     }
@@ -134,10 +134,9 @@ class AETabletClient(
         return null
     }
 
-    fun changeScene(sceneId: String, title: String, headline: String, options: Array<String>) {
-        val dialog = DialogDto(title, headline, options)
-        val activeSceneDto = ActiveSceneDto(sceneId, dialog = dialog)
-        val payload = binaryFormat.encodeToByteArray(ActiveSceneDto.serializer(), activeSceneDto)
-        put("/activescene", payload)
+    fun changeDashboard(dashboardId: Long, content: UIBlock) {
+        val dashboardDto = DashboardDto(dashboardId, content)
+        val payload = binaryFormat.encodeToByteArray(DashboardDto.serializer(), dashboardDto)
+        put("/dashboard", payload)
     }
 }

@@ -20,20 +20,26 @@ import eu.automateeverything.data.configurables.ControlType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.StateDeviceAutomationUnitBase
 import eu.automateeverything.domain.events.EventBus
-import eu.automateeverything.tabletsplugin.composition.UIBlock
+import eu.automateeverything.tabletsplugin.interop.UIBlock
 import java.util.*
 
 class TabletAutomationUnit(
     eventBus: EventBus,
     instance: InstanceDto,
     name: String,
-    composition: UIBlock?,
+    initialCompositionId: Long,
+    initialCompositionContent: UIBlock?,
     states: Map<String, State>,
     private val port: TabletPort,
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {
-    val selectedOptionId: Int? = port.selectedOptionId
     override val usedPortsIds: Array<String>
         get() = arrayOf(port.portId)
+
+    init {
+        if (initialCompositionContent != null) {
+            port.updateDashboard(initialCompositionId, initialCompositionContent)
+        }
+    }
 
     override val recalculateOnTimeChange: Boolean
         get() = false
@@ -44,8 +50,4 @@ class TabletAutomationUnit(
     override fun calculateInternal(now: Calendar) {}
 
     override fun applyNewState(state: String) {}
-
-    fun changeScene(screenId: String, title: String, headline: String, options: Array<String>) {
-        port.changeScreen(screenId, title, headline, options)
-    }
 }

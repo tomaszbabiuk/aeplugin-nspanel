@@ -18,6 +18,7 @@ package eu.automateeverything.tabletsplugin
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.Port
 import eu.automateeverything.domain.hardware.PortCapabilities
+import eu.automateeverything.tabletsplugin.interop.UIBlock
 import java.io.IOException
 import java.util.*
 import kotlinx.coroutines.*
@@ -47,7 +48,7 @@ class TabletPort(
     }
 
     private var actionsClient: CoapClient? = null
-    var activeSceneId = "init"
+    var activeDashboardId = 0L
         private set
 
     var selectedOptionId: Int? = null
@@ -65,9 +66,9 @@ class TabletPort(
         operationScope = CoroutineScope(Dispatchers.IO)
 
         actionsClient =
-            aeClient.observeActiveScene {
-                activeSceneId = it.sceneId
-                selectedOptionId = it.optionId
+            aeClient.observeDashboard {
+                activeDashboardId = it.dashboardId
+                selectedOptionId = it.buttonId
 
                 notifyValueUpdate()
                 updateLastSeenTimeStamp(Calendar.getInstance().timeInMillis)
@@ -90,7 +91,7 @@ class TabletPort(
         operationScope?.cancel()
     }
 
-    fun changeScreen(sceneId: String, title: String, headline: String, options: Array<String>) {
-        aeClient.changeScene(sceneId, title, headline, options)
+    fun updateDashboard(dashboardId: Long, content: UIBlock) {
+        aeClient.changeDashboard(dashboardId, content)
     }
 }

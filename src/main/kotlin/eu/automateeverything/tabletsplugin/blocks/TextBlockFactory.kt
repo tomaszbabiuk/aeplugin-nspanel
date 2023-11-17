@@ -18,7 +18,8 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
-import eu.automateeverything.tabletsplugin.composition.*
+import eu.automateeverything.tabletsplugin.interop.Text
+import eu.automateeverything.tabletsplugin.interop.UIBlock
 
 class TextBlockFactory : UIBlockFactory {
 

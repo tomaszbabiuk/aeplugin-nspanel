@@ -30,8 +30,8 @@ import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.PortFinder
 import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
 import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
-import eu.automateeverything.tabletsplugin.composition.UIBlock
-import eu.automateeverything.tabletsplugin.composition.UIContext
+import eu.automateeverything.tabletsplugin.blocks.UIContext
+import eu.automateeverything.tabletsplugin.interop.UIBlock
 import org.pf4j.Extension
 
 @Extension
@@ -64,21 +64,22 @@ class TabletConfigurable(
         val portId = extractFieldValue(instance, portField)
         val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
         val name = extractFieldValue(instance, nameField)
-        val composition = resolveComposition(instance)
+        val (compositionId, compositionContent) = resolveComposition(instance)
 
         return TabletAutomationUnit(
             eventBus,
             instance,
             name,
-            composition,
+            compositionId,
+            compositionContent,
             states,
             port as TabletPort
         )
     }
 
-    private fun resolveComposition(instance: InstanceDto): UIBlock? {
-        val initialCompositionId = extractFieldValue(instance, initialCompositionIdField)
-        val initialCompositionInstance = repository.getInstance(initialCompositionId.toLong())
+    private fun resolveComposition(instance: InstanceDto): Pair<Long, UIBlock?> {
+        val initialCompositionId = extractFieldValue(instance, initialCompositionIdField).toLong()
+        val initialCompositionInstance = repository.getInstance(initialCompositionId)
         val initialCompositionXml = BlocklyParser().parse(initialCompositionInstance.composition!!)
         val transformer = TabletsTransformer()
 
@@ -90,7 +91,10 @@ class TabletConfigurable(
                     CollectionContext.Automation
                 )
         val context = UIContext(factoriesCache)
-        return transformer.transform(initialCompositionXml.blocks!!, context)
+        return Pair(
+            initialCompositionId,
+            transformer.transform(initialCompositionXml.blocks!!, context)
+        )
     }
 
     override val states: Map<String, State>
