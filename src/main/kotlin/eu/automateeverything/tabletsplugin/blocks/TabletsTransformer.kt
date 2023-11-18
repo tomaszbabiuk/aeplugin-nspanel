@@ -16,18 +16,18 @@
 package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.domain.automation.*
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.UINode
 
 class TabletsTransformer {
 
-    fun transform(blocks: List<Block>, context: UIContext): UIBlock? {
+    fun transform(blocks: List<Block>, context: UIContext): UINode? {
         return blocks
             .filter { it.type == "single" }
             .map { transformStartingPoint(it, context) }
             .firstOrNull()
     }
 
-    fun transformStatement(block: Block, context: UIContext): UIBlock {
+    fun transformStatement(block: Block, context: UIContext): UINode {
         var next: StatementNode? = null
         if (block.next != null) {
             next = transformStatement(block.next!!.block!!, context)
@@ -46,7 +46,7 @@ class TabletsTransformer {
     private fun transformStartingPoint(
         block: Block,
         context: UIContext,
-    ): UIBlock {
+    ): UINode {
         var next: StatementNode? = null
         if (block.next != null) {
             next = transformStatement(block.next!!.block!!, context)

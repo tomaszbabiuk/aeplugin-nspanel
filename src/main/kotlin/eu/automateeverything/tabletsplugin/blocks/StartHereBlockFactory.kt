@@ -19,7 +19,8 @@ import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.domain.automation.blocks.CommonBlockCategories
 import eu.automateeverything.tabletsplugin.R
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.DashboardItem
+import eu.automateeverything.tabletsplugin.interop.UINode
 
 class StartHereBlockFactory : UIBlockFactory {
 
@@ -53,11 +54,11 @@ class StartHereBlockFactory : UIBlockFactory {
         next: StatementNode?,
         context: UIContext,
         transformer: TabletsTransformer,
-    ): UIBlock {
-        if (next != null && next is UIBlock) {
+    ): UINode {
+        if (next != null && next is UINode) {
             return next
         }
 
-        return UIBlock()
+        return UINode(DashboardItem())
     }
 }

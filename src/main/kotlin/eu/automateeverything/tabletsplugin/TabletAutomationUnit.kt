@@ -20,15 +20,16 @@ import eu.automateeverything.data.configurables.ControlType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.StateDeviceAutomationUnitBase
 import eu.automateeverything.domain.events.EventBus
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.DashboardItem
 import java.util.*
 
 class TabletAutomationUnit(
     eventBus: EventBus,
     instance: InstanceDto,
     name: String,
+    initialCompositionTitle: String,
     initialCompositionId: Long,
-    initialCompositionContent: UIBlock?,
+    initialCompositionContent: DashboardItem?,
     states: Map<String, State>,
     private val port: TabletPort,
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {
@@ -37,7 +38,11 @@ class TabletAutomationUnit(
 
     init {
         if (initialCompositionContent != null) {
-            port.updateDashboard(initialCompositionId, initialCompositionContent)
+            port.updateDashboard(
+                initialCompositionTitle,
+                initialCompositionId,
+                initialCompositionContent
+            )
         }
     }
 

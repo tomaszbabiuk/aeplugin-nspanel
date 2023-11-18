@@ -19,7 +19,7 @@ import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.domain.configurable.NameDescriptionConfigurable.Companion.FIELD_NAME
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.UINode
 
 class NavigateBlockFactory(private val dashboard: InstanceDto) : UIBlockFactory {
 
@@ -50,7 +50,7 @@ class NavigateBlockFactory(private val dashboard: InstanceDto) : UIBlockFactory 
         next: StatementNode?,
         context: UIContext,
         transformer: TabletsTransformer,
-    ): UIBlock {
+    ): UINode {
         throw NotImplementedError()
     }
 

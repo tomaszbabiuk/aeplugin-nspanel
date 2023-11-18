@@ -31,7 +31,7 @@ import eu.automateeverything.domain.hardware.PortFinder
 import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
 import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
 import eu.automateeverything.tabletsplugin.blocks.UIContext
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.DashboardItem
 import org.pf4j.Extension
 
 @Extension
@@ -64,12 +64,13 @@ class TabletConfigurable(
         val portId = extractFieldValue(instance, portField)
         val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
         val name = extractFieldValue(instance, nameField)
-        val (compositionId, compositionContent) = resolveComposition(instance)
+        val (compositionTitle, compositionId, compositionContent) = resolveComposition(instance)
 
         return TabletAutomationUnit(
             eventBus,
             instance,
             name,
+            compositionTitle,
             compositionId,
             compositionContent,
             states,
@@ -77,9 +78,10 @@ class TabletConfigurable(
         )
     }
 
-    private fun resolveComposition(instance: InstanceDto): Pair<Long, UIBlock?> {
+    private fun resolveComposition(instance: InstanceDto): Triple<String, Long, DashboardItem?> {
         val initialCompositionId = extractFieldValue(instance, initialCompositionIdField).toLong()
         val initialCompositionInstance = repository.getInstance(initialCompositionId)
+        val initialCompositionTitle = initialCompositionInstance.fields[FIELD_NAME]!!
         val initialCompositionXml = BlocklyParser().parse(initialCompositionInstance.composition!!)
         val transformer = TabletsTransformer()
 
@@ -91,9 +93,10 @@ class TabletConfigurable(
                     CollectionContext.Automation
                 )
         val context = UIContext(factoriesCache)
-        return Pair(
+        return Triple(
+            initialCompositionTitle,
             initialCompositionId,
-            transformer.transform(initialCompositionXml.blocks!!, context)
+            transformer.transform(initialCompositionXml.blocks!!, context)?.item
         )
     }
 

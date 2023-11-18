@@ -18,8 +18,9 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
+import eu.automateeverything.tabletsplugin.interop.DashboardItem
 import eu.automateeverything.tabletsplugin.interop.SingleColumn
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.UINode
 
 class SingleColumnBlockFactory : UIBlockFactory {
 
@@ -61,20 +62,22 @@ class SingleColumnBlockFactory : UIBlockFactory {
         next: StatementNode?,
         context: UIContext,
         transformer: TabletsTransformer,
-    ): UIBlock {
+    ): UINode {
         val content =
             block.statements?.find { it.name == "CONTENT" }
                 ?: throw MalformedBlockException(type, "CONTENT statements missing")
 
-        val children = ArrayList<UIBlock>()
+        val children = ArrayList<DashboardItem>()
 
         var iBlock = content.block
         while (iBlock != null) {
-            val child = transformer.transformStatement(iBlock, context)
+            val child = transformer.transformStatement(iBlock, context).item
             children.add(child)
             iBlock = iBlock.next?.block
         }
 
-        return UIBlock(singleColumn = SingleColumn(children))
+        val columnElement = SingleColumn(children)
+        val dashboardItem = DashboardItem(singleColumn = columnElement)
+        return UINode(dashboardItem)
     }
 }

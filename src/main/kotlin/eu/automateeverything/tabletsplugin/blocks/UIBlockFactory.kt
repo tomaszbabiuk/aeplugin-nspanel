@@ -1,8 +1,8 @@
 package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.domain.automation.BlockFactory
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.UINode
 
-interface UIBlockFactory : BlockFactory<UIBlock, UIContext, TabletsTransformer>
+interface UIBlockFactory : BlockFactory<UINode, UIContext, TabletsTransformer>
 
 data class UIContext(val factoriesCache: List<BlockFactory<*, *, *>>)

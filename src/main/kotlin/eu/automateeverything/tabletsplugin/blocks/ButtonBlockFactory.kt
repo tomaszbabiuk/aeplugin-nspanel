@@ -18,7 +18,10 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.Button
+import eu.automateeverything.tabletsplugin.interop.DashboardItem
+import eu.automateeverything.tabletsplugin.interop.UINode
+import java.util.*
 
 class ButtonBlockFactory : UIBlockFactory {
 
@@ -75,7 +78,12 @@ class ButtonBlockFactory : UIBlockFactory {
         next: StatementNode?,
         context: UIContext,
         transformer: TabletsTransformer,
-    ): UIBlock {
-        return UIBlock()
+    ): UINode {
+        val captionField =
+            block.fields!!.find { it.name == "CAPTION" }
+                ?: throw MalformedBlockException(block.type, "Should have CAPTION field defined")
+
+        val buttonElement = Button(captionField.value ?: "", UUID.randomUUID().toString())
+        return UINode(DashboardItem(button = buttonElement))
     }
 }

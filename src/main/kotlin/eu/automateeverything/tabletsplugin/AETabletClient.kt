@@ -1,7 +1,7 @@
 package eu.automateeverything.tabletsplugin
 
 import eu.automateeverything.tabletsplugin.interop.DashboardDto
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.DashboardItem
 import eu.automateeverything.tabletsplugin.interop.VersionManifestDto
 import java.io.IOException
 import java.net.InetAddress
@@ -134,8 +134,8 @@ class AETabletClient(
         return null
     }
 
-    fun changeDashboard(dashboardId: Long, content: UIBlock) {
-        val dashboardDto = DashboardDto(dashboardId, content)
+    fun changeDashboard(title: String, dashboardId: Long, content: DashboardItem) {
+        val dashboardDto = DashboardDto(title, dashboardId, content)
         val payload = binaryFormat.encodeToByteArray(DashboardDto.serializer(), dashboardDto)
         put("/dashboard", payload)
     }

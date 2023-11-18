@@ -18,7 +18,7 @@ package eu.automateeverything.tabletsplugin
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.Port
 import eu.automateeverything.domain.hardware.PortCapabilities
-import eu.automateeverything.tabletsplugin.interop.UIBlock
+import eu.automateeverything.tabletsplugin.interop.DashboardItem
 import java.io.IOException
 import java.util.*
 import kotlinx.coroutines.*
@@ -51,7 +51,7 @@ class TabletPort(
     var activeDashboardId = 0L
         private set
 
-    var selectedOptionId: Int? = null
+    var selectedButtonRef: String? = null
         private set
 
     override fun read(): TabletConnectorPortValue {
@@ -67,8 +67,8 @@ class TabletPort(
 
         actionsClient =
             aeClient.observeDashboard {
-                activeDashboardId = it.dashboardId
-                selectedOptionId = it.buttonId
+                activeDashboardId = it.id
+                selectedButtonRef = it.buttonRef
 
                 notifyValueUpdate()
                 updateLastSeenTimeStamp(Calendar.getInstance().timeInMillis)
@@ -91,7 +91,7 @@ class TabletPort(
         operationScope?.cancel()
     }
 
-    fun updateDashboard(dashboardId: Long, content: UIBlock) {
-        aeClient.changeDashboard(dashboardId, content)
+    fun updateDashboard(title: String, dashboardId: Long, content: DashboardItem) {
+        aeClient.changeDashboard(title, dashboardId, content)
     }
 }
