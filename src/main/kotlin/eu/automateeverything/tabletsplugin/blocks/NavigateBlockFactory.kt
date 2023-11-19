@@ -25,9 +25,11 @@ class NavigateBlockFactory(private val dashboard: InstanceDto) : UIBlockFactory 
 
     override val category = TabletsBlockCategories.Actions
 
-    private val typePrefix = "tablet_navigate_"
+    companion object {
+        const val TYPE_PREFIX = "tablet_navigate_"
+    }
 
-    override val type: String = "$typePrefix${dashboard.id}"
+    override val type: String = "$TYPE_PREFIX${dashboard.id}"
 
     override fun buildBlock(): RawJson {
         return RawJson {
@@ -59,6 +61,6 @@ class NavigateBlockFactory(private val dashboard: InstanceDto) : UIBlockFactory 
     }
 
     override fun belongs(type: String): Boolean {
-        return type.startsWith(typePrefix)
+        return type.startsWith(TYPE_PREFIX)
     }
 }

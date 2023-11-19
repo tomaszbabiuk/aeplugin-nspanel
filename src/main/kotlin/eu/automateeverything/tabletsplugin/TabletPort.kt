@@ -19,7 +19,6 @@ import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.Port
 import eu.automateeverything.domain.hardware.PortCapabilities
 import eu.automateeverything.tabletsplugin.interop.DashboardItem
-import java.io.IOException
 import java.util.*
 import kotlinx.coroutines.*
 import org.eclipse.californium.core.CoapClient
@@ -39,7 +38,7 @@ class TabletPort(
         portId,
         eventBus,
         TabletConnectorPortValue::class.java,
-        PortCapabilities(false, false),
+        PortCapabilities(canRead = true, canWrite = false),
         0L
     ) {
 
@@ -47,19 +46,12 @@ class TabletPort(
         updateLastSeenTimeStamp(lastSeenTimestamp)
     }
 
+    private var lastValue = TabletConnectorPortValue(TabletUIState(0, null))
+
     private var actionsClient: CoapClient? = null
-    var activeDashboardId = 0L
-        private set
-
-    var selectedButtonRef: String? = null
-        private set
-
-    override fun read(): TabletConnectorPortValue {
-        return TabletConnectorPortValue()
-    }
 
     override fun readInternal(): TabletConnectorPortValue {
-        throw IOException("This port cannot read")
+        return lastValue
     }
 
     fun start() {
@@ -67,9 +59,7 @@ class TabletPort(
 
         actionsClient =
             aeClient.observeDashboard {
-                activeDashboardId = it.id
-                selectedButtonRef = it.buttonRef
-
+                lastValue = TabletConnectorPortValue(TabletUIState(it.id, it.buttonRef))
                 notifyValueUpdate()
                 updateLastSeenTimeStamp(Calendar.getInstance().timeInMillis)
             }

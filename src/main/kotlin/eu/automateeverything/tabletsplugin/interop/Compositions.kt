@@ -12,13 +12,13 @@ data class DashboardItem(
     val headline: Headline? = null,
     val text: Text? = null,
     val singleColumn: SingleColumn? = null,
-    val button: Button? = null
+    val navigationButton: NavigationButton? = null
 )
 
 @Serializable data class Headline(val text: String)
 
 @Serializable data class Text(val text: String)
 
-@Serializable data class Button(val text: String, val ref: String)
+@Serializable data class NavigationButton(val label: String, val ref: String)
 
 @Serializable data class SingleColumn(val children: List<DashboardItem>)

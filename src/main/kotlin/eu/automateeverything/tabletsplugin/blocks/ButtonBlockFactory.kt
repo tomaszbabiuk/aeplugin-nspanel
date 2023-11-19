@@ -18,8 +18,9 @@ package eu.automateeverything.tabletsplugin.blocks
 import eu.automateeverything.data.blocks.RawJson
 import eu.automateeverything.domain.automation.*
 import eu.automateeverything.tabletsplugin.R
-import eu.automateeverything.tabletsplugin.interop.Button
 import eu.automateeverything.tabletsplugin.interop.DashboardItem
+import eu.automateeverything.tabletsplugin.interop.NavigationButton
+import eu.automateeverything.tabletsplugin.interop.Text
 import eu.automateeverything.tabletsplugin.interop.UINode
 import java.util.*
 
@@ -38,12 +39,12 @@ class ButtonBlockFactory : UIBlockFactory {
                   "args0": [
                     {
                       "type": "field_input",
-                      "name": "CAPTION",
+                      "name": "LABEL",
                       "text": ""
                     },
                     {
                       "type": "input_value",
-                      "name": "NAME",
+                      "name": "ACTION",
                       "check": [
                         "tablet_navigate",
                         "tablet_change_state"
@@ -79,11 +80,36 @@ class ButtonBlockFactory : UIBlockFactory {
         context: UIContext,
         transformer: TabletsTransformer,
     ): UINode {
-        val captionField =
-            block.fields!!.find { it.name == "CAPTION" }
-                ?: throw MalformedBlockException(block.type, "Should have CAPTION field defined")
+        fun continueWithNavigationButton(caption: String, dashboardId: Long): UINode {
+            val reference = UUID.randomUUID().toString()
+            val buttonElement = NavigationButton(caption, reference)
+            context.registerRoute(dashboardId, reference)
+            return UINode(DashboardItem(navigationButton = buttonElement))
+        }
 
-        val buttonElement = Button(captionField.value ?: "", UUID.randomUUID().toString())
-        return UINode(DashboardItem(button = buttonElement))
+        fun continueWithEmptyButton(caption: String): UINode {
+            return UINode(DashboardItem(text = Text(caption)))
+        }
+
+        val captionField =
+            block.fields!!.find { it.name == "LABEL" }
+                ?: throw MalformedBlockException(block.type, "Should have CAPTION field defined")
+        val caption = captionField.value ?: ""
+
+        val actionValue =
+            block.values!!.find { it.name == "ACTION" }
+                ?: throw MalformedBlockException(block.type, "Should have ACTION value defined")
+
+        if (actionValue.block != null) {
+            val actionTypeRaw = actionValue.block!!.type
+            if (actionTypeRaw.startsWith(NavigateBlockFactory.TYPE_PREFIX)) {
+                val dashboardIdRaw =
+                    actionValue.block!!.type.replace(NavigateBlockFactory.TYPE_PREFIX, "")
+                val dashboardId = dashboardIdRaw.toLong()
+                return continueWithNavigationButton(caption, dashboardId)
+            }
+        }
+
+        return continueWithEmptyButton(caption)
     }
 }

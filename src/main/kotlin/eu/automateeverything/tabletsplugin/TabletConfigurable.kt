@@ -23,15 +23,9 @@ import eu.automateeverything.data.fields.PortReference
 import eu.automateeverything.data.fields.PortReferenceType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.AutomationUnit
-import eu.automateeverything.domain.automation.BlocklyParser
-import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.*
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.PortFinder
-import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
-import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
-import eu.automateeverything.tabletsplugin.blocks.UIContext
-import eu.automateeverything.tabletsplugin.interop.DashboardItem
 import org.pf4j.Extension
 
 @Extension
@@ -52,9 +46,9 @@ class TabletConfigurable(
             RequiredStringValidator()
         )
 
-    private val initialCompositionIdField =
+    private val initialDashboardIdField =
         InstanceReferenceField(
-            FIELD_INITIAL_COMPOSITION,
+            FIELD_INITIAL_DASHBOARD,
             R.field_initial_composition,
             InstanceReference(DashboardConfigurable::class.java, InstanceReferenceType.Single),
             RequiredStringValidator()
@@ -64,39 +58,16 @@ class TabletConfigurable(
         val portId = extractFieldValue(instance, portField)
         val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
         val name = extractFieldValue(instance, nameField)
-        val (compositionTitle, compositionId, compositionContent) = resolveComposition(instance)
+        val initialCompositionId = extractFieldValue(instance, initialDashboardIdField).toLong()
 
         return TabletAutomationUnit(
             eventBus,
             instance,
             name,
-            compositionTitle,
-            compositionId,
-            compositionContent,
-            states,
-            port as TabletPort
-        )
-    }
-
-    private fun resolveComposition(instance: InstanceDto): Triple<String, Long, DashboardItem?> {
-        val initialCompositionId = extractFieldValue(instance, initialCompositionIdField).toLong()
-        val initialCompositionInstance = repository.getInstance(initialCompositionId)
-        val initialCompositionTitle = initialCompositionInstance.fields[FIELD_NAME]!!
-        val initialCompositionXml = BlocklyParser().parse(initialCompositionInstance.composition!!)
-        val transformer = TabletsTransformer()
-
-        val factoriesCache =
-            TabletsBlocksCollector(repository)
-                .collect(
-                    DashboardConfigurable(repository),
-                    initialCompositionInstance.id,
-                    CollectionContext.Automation
-                )
-        val context = UIContext(factoriesCache)
-        return Triple(
-            initialCompositionTitle,
             initialCompositionId,
-            transformer.transform(initialCompositionXml.blocks!!, context)?.item
+            states,
+            port as TabletPort,
+            repository
         )
     }
 
@@ -126,7 +97,7 @@ class TabletConfigurable(
             val result: MutableMap<String, FieldDefinition<*>> =
                 LinkedHashMap(super.fieldDefinitions)
             result[FIELD_PORT] = portField
-            result[FIELD_INITIAL_COMPOSITION] = initialCompositionIdField
+            result[FIELD_INITIAL_DASHBOARD] = initialDashboardIdField
             return result
         }
 
@@ -162,7 +133,7 @@ class TabletConfigurable(
 
     companion object {
         const val FIELD_PORT = "portId"
-        const val FIELD_INITIAL_COMPOSITION = "compositionId"
+        const val FIELD_INITIAL_DASHBOARD = "dashboardId"
         const val STATE_ACTIVE = "active"
         const val STATE_INACTIVE = "inactive"
     }

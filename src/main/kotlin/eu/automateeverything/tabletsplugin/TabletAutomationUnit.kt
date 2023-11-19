@@ -15,11 +15,18 @@ package eu.automateeverything.tabletsplugin
  *  limitations under the License.
  */
 
+import eu.automateeverything.data.Repository
 import eu.automateeverything.data.automation.State
 import eu.automateeverything.data.configurables.ControlType
 import eu.automateeverything.data.instances.InstanceDto
+import eu.automateeverything.domain.automation.BlocklyParser
 import eu.automateeverything.domain.automation.StateDeviceAutomationUnitBase
+import eu.automateeverything.domain.automation.blocks.CollectionContext
+import eu.automateeverything.domain.configurable.NameDescriptionConfigurable
 import eu.automateeverything.domain.events.EventBus
+import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
+import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
+import eu.automateeverything.tabletsplugin.blocks.UIContext
 import eu.automateeverything.tabletsplugin.interop.DashboardItem
 import java.util.*
 
@@ -27,32 +34,67 @@ class TabletAutomationUnit(
     eventBus: EventBus,
     instance: InstanceDto,
     name: String,
-    initialCompositionTitle: String,
     initialCompositionId: Long,
-    initialCompositionContent: DashboardItem?,
     states: Map<String, State>,
     private val port: TabletPort,
+    private val repository: Repository,
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {
     override val usedPortsIds: Array<String>
         get() = arrayOf(port.portId)
 
+    private var uiContext: UIContext
+
     init {
-        if (initialCompositionContent != null) {
-            port.updateDashboard(
-                initialCompositionTitle,
-                initialCompositionId,
-                initialCompositionContent
-            )
-        }
+        uiContext = changeDashboard(initialCompositionId)
+    }
+
+    private fun changeDashboard(dashboardId: Long): UIContext {
+        val factoriesCache =
+            TabletsBlocksCollector(repository)
+                .collect(
+                    DashboardConfigurable(repository),
+                    dashboardId,
+                    CollectionContext.Automation
+                )
+        uiContext = UIContext(factoriesCache)
+        val (dashboardTitle, dashboardItem) = resolveComposition(dashboardId, uiContext)
+        port.updateDashboard(dashboardTitle, dashboardId, dashboardItem!!)
+
+        return uiContext
     }
 
     override val recalculateOnTimeChange: Boolean
         get() = false
 
     override val recalculateOnPortUpdate: Boolean
-        get() = false
+        get() = true
 
-    override fun calculateInternal(now: Calendar) {}
+    override fun calculateInternal(now: Calendar) {
+        val newState = port.read()
+        val buttonRef = newState.value.lastPressedButtonRef
+        if (buttonRef != null) {
+            val newDashboardId = uiContext.resolveRoute(buttonRef)
+            if (newDashboardId != null) {
+                changeDashboard(newDashboardId)
+            }
+        }
+    }
 
     override fun applyNewState(state: String) {}
+
+    private fun resolveComposition(
+        initialCompositionId: Long,
+        uiContext: UIContext
+    ): Pair<String, DashboardItem?> {
+        val initialCompositionInstance = repository.getInstance(initialCompositionId)
+        val initialCompositionTitle =
+            initialCompositionInstance.fields[NameDescriptionConfigurable.FIELD_NAME]!!
+        val initialCompositionXml = BlocklyParser().parse(initialCompositionInstance.composition!!)
+        val transformer = TabletsTransformer()
+
+        return Pair(
+            initialCompositionTitle,
+            transformer.transform(initialCompositionXml.blocks!!, uiContext)?.item
+        )
+    }
 }

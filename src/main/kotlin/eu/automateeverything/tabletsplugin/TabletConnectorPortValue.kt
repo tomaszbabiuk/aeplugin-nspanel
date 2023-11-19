@@ -19,12 +19,14 @@ import eu.automateeverything.data.hardware.PortValue
 import eu.automateeverything.data.localization.Resource
 import java.math.BigDecimal
 
-class TabletConnectorPortValue: PortValue {
+data class TabletUIState(val dashboardId: Long, val lastPressedButtonRef: String?)
+
+class TabletConnectorPortValue(val value: TabletUIState) : PortValue {
     override fun toFormattedString(): Resource {
         return R.n_a
     }
 
     override fun asDecimal(): BigDecimal {
-        return BigDecimal.ZERO
+        return BigDecimal(value.dashboardId)
     }
 }
