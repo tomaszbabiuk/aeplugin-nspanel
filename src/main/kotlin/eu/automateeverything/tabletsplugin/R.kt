@@ -21,17 +21,6 @@ import eu.automateeverything.data.localization.Resource
 
 object R {
     val field_initial_composition = Resource("Initial composition", "Kompozycja startowa")
-    val field_title_hint = Resource("Title", "Tytuł")
-    val field_headline_hint = Resource("Headline", "Treść")
-    val field_option1_hint = Resource("Option 1", "Opcja 1")
-    val field_option2_hint = Resource("Option 2", "Opcja 2")
-    val field_option3_hint = Resource("Option 3", "Opcja 3")
-    val field_option4_hint = Resource("Option 4", "Opcja 4")
-    val field_option5_hint = Resource("Option 5", "Opcja 5")
-    val field_option6_hint = Resource("Option 6", "Opcja 6")
-    val field_option7_hint = Resource("Option 7", "Opcja 7")
-    val state_active = Resource("Active", "Aktywny")
-    val state_inactive = Resource("Inactive", "Nieaktywny")
     val configurable_tablet_add = Resource("Add tablet", "Dodaj tablet")
     val configurable_tablet_edit = Resource("Edit tablet", "Edytuj tablet")
     val configurable_tablets_title = Resource("Tablets", "Tablety")
@@ -43,24 +32,15 @@ object R {
     val configurable_tablet_title = Resource("Tablets (Android)", "Tablety (Android)")
     val configurable_tablet_description =
         Resource("A custom control over Android tablet.", "Kontroler dla tabletów z Androidem.")
-    val configurable_dialog_add = Resource("Add dialog", "Dodaj dialog")
     val configurable_dashboard_add = Resource("Add dashboard", "Dodaj panel")
-    val configurable_dialog_edit = Resource("Edit dialog", "Edytuj dialog")
     val configurable_dashboard_edit = Resource("Edit dashboard", "Edytuj dashboard")
-    val configurable_dialog_title = Resource("Dialogs", "Dialogi")
     val configurable_dashboard_title = Resource("Dashboards", "Panele kontrolne")
-    val configurable_dialog_description =
-        Resource(
-            "A dialog than can be displayed on Android tablet.",
-            "Dialog wyświetlany na tabletach z androidem"
-        )
     val configurable_dashboard_description =
         Resource(
             "An unique and totally custom set of user interface in a form of a dashboard to be presented on the tablets.",
             "Całkowicie unikalny i personalizowany interfejs użytkownika do prezentowania w formie tablic kontrolnych na tabletach."
         )
     val field_port_hint = Resource("Port", "Port")
-    val state_unknown = Resource("Unknown", "Nieznany")
     val plugin_name = Resource("Tablets", "Tablety")
     val plugin_description =
         Resource(

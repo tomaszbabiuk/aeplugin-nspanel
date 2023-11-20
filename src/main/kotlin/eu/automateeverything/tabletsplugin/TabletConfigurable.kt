@@ -22,7 +22,6 @@ import eu.automateeverything.data.fields.InstanceReferenceType
 import eu.automateeverything.data.fields.PortReference
 import eu.automateeverything.data.fields.PortReferenceType
 import eu.automateeverything.data.instances.InstanceDto
-import eu.automateeverything.domain.automation.AutomationUnit
 import eu.automateeverything.domain.configurable.*
 import eu.automateeverything.domain.events.EventBus
 import eu.automateeverything.domain.hardware.PortFinder
@@ -54,9 +53,8 @@ class TabletConfigurable(
             RequiredStringValidator()
         )
 
-    override fun buildAutomationUnit(instance: InstanceDto): AutomationUnit<State> {
+    override fun buildAutomationUnit(instance: InstanceDto): TabletAutomationUnit {
         val portId = extractFieldValue(instance, portField)
-        val port = portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
         val name = extractFieldValue(instance, nameField)
         val initialCompositionId = extractFieldValue(instance, initialDashboardIdField).toLong()
 
@@ -64,9 +62,10 @@ class TabletConfigurable(
             eventBus,
             instance,
             name,
+            portId,
             initialCompositionId,
             states,
-            port as TabletPort,
+            portFinder,
             repository
         )
     }
@@ -74,20 +73,25 @@ class TabletConfigurable(
     override val states: Map<String, State>
         get() {
             val states: MutableMap<String, State> = HashMap()
-            states[STATE_UNKNOWN] =
+            states[STATE_INIT] =
                 State.buildReadOnlyState(
-                    STATE_UNKNOWN,
-                    R.state_unknown,
+                    STATE_INIT,
+                    eu.automateeverything.domain.R.state_init,
                 )
-            states[STATE_ACTIVE] =
+            states[STATE_ERROR] =
                 State.buildReadOnlyState(
-                    STATE_ACTIVE,
-                    R.state_active,
+                    STATE_ERROR,
+                    eu.automateeverything.domain.R.state_error,
                 )
-            states[STATE_INACTIVE] =
+            states[STATE_REPARATION] =
                 State.buildReadOnlyState(
-                    STATE_INACTIVE,
-                    R.state_inactive,
+                    STATE_REPARATION,
+                    eu.automateeverything.domain.R.state_reparation,
+                )
+            states[STATE_OPERATIONAL] =
+                State.buildReadOnlyState(
+                    STATE_OPERATIONAL,
+                    eu.automateeverything.domain.R.state_operational,
                 )
             return states
         }
@@ -134,7 +138,5 @@ class TabletConfigurable(
     companion object {
         const val FIELD_PORT = "portId"
         const val FIELD_INITIAL_DASHBOARD = "dashboardId"
-        const val STATE_ACTIVE = "active"
-        const val STATE_INACTIVE = "inactive"
     }
 }

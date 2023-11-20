@@ -39,7 +39,7 @@ class TabletPort(
         eventBus,
         TabletConnectorPortValue::class.java,
         PortCapabilities(canRead = true, canWrite = false),
-        0L
+        2 * 60 * 1000
     ) {
 
     init {

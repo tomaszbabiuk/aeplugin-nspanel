@@ -20,10 +20,14 @@ import eu.automateeverything.data.automation.State
 import eu.automateeverything.data.configurables.ControlType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.BlocklyParser
+import eu.automateeverything.domain.automation.PortNotFoundException
 import eu.automateeverything.domain.automation.StateDeviceAutomationUnitBase
 import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.NameDescriptionConfigurable
+import eu.automateeverything.domain.configurable.StateDeviceConfigurable.Companion.STATE_ERROR
+import eu.automateeverything.domain.configurable.StateDeviceConfigurable.Companion.STATE_OPERATIONAL
 import eu.automateeverything.domain.events.EventBus
+import eu.automateeverything.domain.hardware.PortFinder
 import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
 import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
 import eu.automateeverything.tabletsplugin.blocks.UIContext
@@ -34,21 +38,49 @@ class TabletAutomationUnit(
     eventBus: EventBus,
     instance: InstanceDto,
     name: String,
+    private val portId: String,
     initialCompositionId: Long,
     states: Map<String, State>,
-    private val port: TabletPort,
+    private val portFinder: PortFinder,
     private val repository: Repository,
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {
     override val usedPortsIds: Array<String>
-        get() = arrayOf(port.portId)
+        get() = arrayOf(portId)
 
     private var uiContext: UIContext
+    private var cachedPort: TabletPort? = null
 
     init {
-        uiContext = changeDashboard(initialCompositionId)
+        val now = Calendar.getInstance().timeInMillis
+        val (context, dashboardTitle, dashboard) = changeDashboard(initialCompositionId)
+        uiContext = context
+        val port = resolvePort()
+        if (port != null && port.assumeConnected(now)) {
+            changeState(STATE_OPERATIONAL)
+            port.updateDashboard(dashboardTitle, initialCompositionId, dashboard)
+        } else {
+            changeState(STATE_ERROR)
+        }
     }
 
-    private fun changeDashboard(dashboardId: Long): UIContext {
+    private fun resolvePort(): TabletPort? {
+        if (cachedPort != null) {
+            return cachedPort
+        }
+
+        return try {
+            val port =
+                portFinder.searchForAnyPort(TabletConnectorPortValue::class.java, portId)
+                    as TabletPort
+            cachedPort = port
+            port
+        } catch (ex: PortNotFoundException) {
+            cachedPort = null
+            null
+        }
+    }
+
+    private fun changeDashboard(dashboardId: Long): Triple<UIContext, String, DashboardItem> {
         val factoriesCache =
             TabletsBlocksCollector(repository)
                 .collect(
@@ -58,9 +90,8 @@ class TabletAutomationUnit(
                 )
         uiContext = UIContext(factoriesCache)
         val (dashboardTitle, dashboardItem) = resolveComposition(dashboardId, uiContext)
-        port.updateDashboard(dashboardTitle, dashboardId, dashboardItem!!)
 
-        return uiContext
+        return Triple(uiContext, dashboardTitle, dashboardItem!!)
     }
 
     override val recalculateOnTimeChange: Boolean
@@ -70,13 +101,19 @@ class TabletAutomationUnit(
         get() = true
 
     override fun calculateInternal(now: Calendar) {
-        val newState = port.read()
-        val buttonRef = newState.value.lastPressedButtonRef
-        if (buttonRef != null) {
-            val newDashboardId = uiContext.resolveRoute(buttonRef)
-            if (newDashboardId != null) {
-                changeDashboard(newDashboardId)
+        val port = resolvePort()
+        if (port != null && port.assumeConnected(now.timeInMillis)) {
+            changeState(STATE_OPERATIONAL)
+            val newState = port.read()
+            val buttonRef = newState.value.lastPressedButtonRef
+            if (buttonRef != null) {
+                val newDashboardId = uiContext.resolveRoute(buttonRef)
+                if (newDashboardId != null) {
+                    changeDashboard(newDashboardId)
+                }
             }
+        } else {
+            changeState(STATE_ERROR)
         }
     }
 
