@@ -15,7 +15,7 @@ package eu.automateeverything.tabletsplugin
  *  limitations under the License.
  */
 
-import eu.automateeverything.data.Repository
+import eu.automateeverything.data.DataRepository
 import eu.automateeverything.data.automation.State
 import eu.automateeverything.data.configurables.ControlType
 import eu.automateeverything.data.instances.InstanceDto
@@ -27,6 +27,7 @@ import eu.automateeverything.domain.configurable.NameDescriptionConfigurable
 import eu.automateeverything.domain.configurable.StateDeviceConfigurable.Companion.STATE_ERROR
 import eu.automateeverything.domain.configurable.StateDeviceConfigurable.Companion.STATE_OPERATIONAL
 import eu.automateeverything.domain.events.EventBus
+import eu.automateeverything.domain.extensibility.ConfigurableRepository
 import eu.automateeverything.domain.hardware.PortFinder
 import eu.automateeverything.tabletsplugin.blocks.TabletsBlocksCollector
 import eu.automateeverything.tabletsplugin.blocks.TabletsTransformer
@@ -42,7 +43,8 @@ class TabletAutomationUnit(
     initialCompositionId: Long,
     states: Map<String, State>,
     private val portFinder: PortFinder,
-    private val repository: Repository,
+    private val dataRepository: DataRepository,
+    private val configurableRepository: ConfigurableRepository
 ) : StateDeviceAutomationUnitBase(eventBus, instance, name, ControlType.States, states, false) {
     override val usedPortsIds: Array<String>
         get() = arrayOf(portId)
@@ -82,9 +84,9 @@ class TabletAutomationUnit(
 
     private fun changeDashboard(dashboardId: Long): Triple<UIContext, String, DashboardItem> {
         val factoriesCache =
-            TabletsBlocksCollector(repository)
+            TabletsBlocksCollector(dataRepository, configurableRepository)
                 .collect(
-                    DashboardConfigurable(repository),
+                    DashboardConfigurable(dataRepository),
                     dashboardId,
                     CollectionContext.Automation
                 )
@@ -123,7 +125,7 @@ class TabletAutomationUnit(
         initialCompositionId: Long,
         uiContext: UIContext
     ): Pair<String, DashboardItem?> {
-        val initialCompositionInstance = repository.getInstance(initialCompositionId)
+        val initialCompositionInstance = dataRepository.getInstance(initialCompositionId)
         val initialCompositionTitle =
             initialCompositionInstance.fields[NameDescriptionConfigurable.FIELD_NAME]!!
         val initialCompositionXml = BlocklyParser().parse(initialCompositionInstance.composition!!)

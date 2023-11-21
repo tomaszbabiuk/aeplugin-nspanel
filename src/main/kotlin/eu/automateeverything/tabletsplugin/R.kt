@@ -51,6 +51,8 @@ object R {
     val category_ui = Resource("User interface", "Interfejs użytkownika")
     val category_actions = Resource("Actions", "Akcje")
     val category_layouts = Resource("Layouts", "Układ")
+    val category_other_devices = Resource("Other devices", "Inne urządzenia")
+    val category_start_here = Resource("!Start here", "!Zacznij tutaj")
 
     val block_start_here_message = Resource("Start here", "Zacznij tutaj")
     val block_text_message = Resource("Text: %1", "Text %1")

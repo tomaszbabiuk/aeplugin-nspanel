@@ -15,24 +15,32 @@
 
 package eu.automateeverything.tabletsplugin.blocks
 
-import eu.automateeverything.data.Repository
+import eu.automateeverything.data.DataRepository
 import eu.automateeverything.domain.automation.BlockFactory
 import eu.automateeverything.domain.automation.blocks.BlockFactoriesCollector
 import eu.automateeverything.domain.automation.blocks.CollectionContext
 import eu.automateeverything.domain.configurable.Configurable
+import eu.automateeverything.domain.configurable.DeviceConfigurable
+import eu.automateeverything.domain.extensibility.ConfigurableRepository
 import eu.automateeverything.tabletsplugin.DashboardConfigurable
+import eu.automateeverything.tabletsplugin.TabletConfigurable
 import org.pf4j.Extension
 
 @Suppress("unused")
 @Extension
-class TabletsBlocksCollector(private val repository: Repository) : BlockFactoriesCollector {
+class TabletsBlocksCollector(
+    private val dataRepository: DataRepository,
+    private val configurableRepository: ConfigurableRepository
+) : BlockFactoriesCollector {
 
     override fun collect(
         thisDevice: Configurable,
         instanceId: Long?,
         context: CollectionContext
     ): List<BlockFactory<*, *, *>> {
-        return collectUIBlocks(thisDevice) + collectNavigationFactories(instanceId)
+        return collectUIBlocks(thisDevice) +
+            collectNavigationFactories(instanceId) +
+            collectDeviceFactories()
     }
 
     private fun collectUIBlocks(thisDevice: Configurable): List<BlockFactory<*, *, *>> {
@@ -42,7 +50,8 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
                 TextBlockFactory(),
                 ButtonBlockFactory(),
                 StartHereBlockFactory(),
-                SingleColumnBlockFactory()
+                SingleColumnBlockFactory(),
+                QuarterControlBlockFactory()
             )
         }
 
@@ -50,10 +59,22 @@ class TabletsBlocksCollector(private val repository: Repository) : BlockFactorie
     }
 
     private fun collectNavigationFactories(instanceId: Long?): List<BlockFactory<*, *, *>> {
-        return repository
+        return dataRepository
             .getAllInstances()
             .filter { it.clazz == DashboardConfigurable::class.java.name }
             .filter { it.id != instanceId }
             .map { NavigateBlockFactory(it) }
+    }
+
+    private fun collectDeviceFactories(): List<BlockFactory<*, *, *>> {
+        val allConfigurables = configurableRepository.getAllConfigurables()
+        val deviceConfigurables =
+            allConfigurables
+                .filter { DeviceConfigurable::class.java.isAssignableFrom(it::class.java) }
+                .filter { it::class.java != TabletConfigurable::class.java }
+
+        return deviceConfigurables
+            .flatMap { dataRepository.getInstancesOfClazz(it::class.java.name) }
+            .map { DeviceBlockFactory(it) }
     }
 }

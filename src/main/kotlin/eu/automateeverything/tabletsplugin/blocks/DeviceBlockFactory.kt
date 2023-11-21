@@ -16,29 +16,28 @@
 package eu.automateeverything.tabletsplugin.blocks
 
 import eu.automateeverything.data.blocks.RawJson
+import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.automation.*
-import eu.automateeverything.tabletsplugin.R
-import eu.automateeverything.tabletsplugin.interop.DashboardItem
+import eu.automateeverything.domain.configurable.NameDescriptionConfigurable.Companion.FIELD_NAME
 import eu.automateeverything.tabletsplugin.interop.UINode
 
-class StartHereBlockFactory : UIBlockFactory {
+class DeviceBlockFactory(private val device: InstanceDto) : UIBlockFactory {
 
-    override val category = TabletsBlockCategories.StartHere
+    override val category = TabletsBlockCategories.Devices
 
-    override val type: String = "single"
+    companion object {
+        const val TYPE_PREFIX = "tablet_device_"
+    }
+
+    override val type: String = "$TYPE_PREFIX${device.id}"
 
     override fun buildBlock(): RawJson {
-        return RawJson { language ->
+        return RawJson {
             """
                 {
                   "type": "$type",
-                  "message0": "${R.block_start_here_message.getValue(language)}",
-                  "nextStatement": [
-                    "tablet_single_column",
-                    "tablet_double_column",
-                    "tablet_quarter_control"
-                  ],
-                  "nextStatement": "single",                
+                  "message0": "${device.fields[FIELD_NAME]}",
+                  "output": "tablet_device",
                   "colour": ${category.color},
                   "tooltip": "",
                   "helpUrl": ""
@@ -54,10 +53,14 @@ class StartHereBlockFactory : UIBlockFactory {
         context: UIContext,
         transformer: TabletsTransformer,
     ): UINode {
-        if (next != null && next is UINode) {
-            return next
-        }
+        throw NotImplementedError()
+    }
 
-        return UINode(DashboardItem())
+    override fun dependsOn(): List<Long> {
+        return listOf(device.id)
+    }
+
+    override fun belongs(type: String): Boolean {
+        return type.startsWith(TYPE_PREFIX)
     }
 }

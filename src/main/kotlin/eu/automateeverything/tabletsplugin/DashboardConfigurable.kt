@@ -15,12 +15,12 @@
 
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.data.Repository
+import eu.automateeverything.data.DataRepository
 import eu.automateeverything.domain.configurable.*
 import org.pf4j.Extension
 
 @Extension
-open class DashboardConfigurable(private val repository: Repository) :
+open class DashboardConfigurable(private val dataRepository: DataRepository) :
     NameDescriptionConfigurable() {
 
     override val parent: Class<out Configurable>
@@ -31,7 +31,7 @@ open class DashboardConfigurable(private val repository: Repository) :
             val uniqueNameValidator =
                 UniqueValueAcrossItsTypeValidator(
                     DashboardConfigurable::class.java,
-                    repository,
+                    dataRepository,
                     FIELD_NAME
                 )
             val result: MutableMap<String, FieldDefinition<*>> = LinkedHashMap()

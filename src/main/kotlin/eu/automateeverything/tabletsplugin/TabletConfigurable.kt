@@ -15,7 +15,7 @@
 
 package eu.automateeverything.tabletsplugin
 
-import eu.automateeverything.data.Repository
+import eu.automateeverything.data.DataRepository
 import eu.automateeverything.data.automation.State
 import eu.automateeverything.data.fields.InstanceReference
 import eu.automateeverything.data.fields.InstanceReferenceType
@@ -24,6 +24,7 @@ import eu.automateeverything.data.fields.PortReferenceType
 import eu.automateeverything.data.instances.InstanceDto
 import eu.automateeverything.domain.configurable.*
 import eu.automateeverything.domain.events.EventBus
+import eu.automateeverything.domain.extensibility.ConfigurableRepository
 import eu.automateeverything.domain.hardware.PortFinder
 import org.pf4j.Extension
 
@@ -31,7 +32,8 @@ import org.pf4j.Extension
 class TabletConfigurable(
     private val portFinder: PortFinder,
     private val eventBus: EventBus,
-    private val repository: Repository
+    private val dataRepository: DataRepository,
+    private val configurableRepository: ConfigurableRepository
 ) : StateDeviceConfigurable() {
 
     override val parent: Class<out Configurable>
@@ -66,7 +68,8 @@ class TabletConfigurable(
             initialCompositionId,
             states,
             portFinder,
-            repository
+            dataRepository,
+            configurableRepository
         )
     }
 
