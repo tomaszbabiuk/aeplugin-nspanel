@@ -81,12 +81,26 @@ class QuarterControlBlockFactory : UIBlockFactory {
         context: UIContext,
         transformer: TabletsTransformer,
     ): UINode {
-        val device1Id = 1L
-        val device2Id = 2L
-        val device3Id = 3L
-        val device4Id = 4L
-        val controlGrid = QuarterControl(device1Id, device2Id, device3Id, device4Id)
+        val device1 = readDeviceId(block, "DEVICE1")
+        val device2 = readDeviceId(block, "DEVICE2")
+        val device3 = readDeviceId(block, "DEVICE3")
+        val device4 = readDeviceId(block, "DEVICE4")
+        val controlGrid = QuarterControl(device1, device2, device3, device4)
         val dashboardItem = DashboardItem(quarterControl = controlGrid)
         return UINode(dashboardItem)
+    }
+
+    private fun readDeviceId(block: Block, valueName: String): Long? {
+        val value = block.values!!.find { it.name == valueName }
+
+        if (value != null) {
+            val deviceBlockType = value.block!!.type
+
+            val deviceInstanceIdRaw = deviceBlockType.replace(DeviceBlockFactory.TYPE_PREFIX, "")
+
+            return deviceInstanceIdRaw.toLong()
+        }
+
+        return null
     }
 }
